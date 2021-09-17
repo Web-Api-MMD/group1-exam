@@ -51,7 +51,10 @@ class Account {
                     .alphanum()
                     .min(1)
                     .max(50)
-                    .required()
+                    .required(),
+                roleDescription: Joi.string()
+                    .min(1)
+                    .max(255)
             }).required()
         });
 
@@ -75,12 +78,12 @@ class Account {
                     const result = await pool.request()
                         .input('userEmail', sql.NVarChar(255), accountObj.userEmail)
                         .query(`
-                            SELECT u.userId, u.userName, r.roleId, r.roleName, p.passwordValue
-                            FROM liloUser u
-                            JOIN liloPassword p
-                                ON u.userId = p.FK_userId
-                            JOIN liloRole r
-                                ON u.FK_roleId = r.roleId
+                            SELECT u.userID, u.userName, r.roleID, r.roleName, p.passwordValue
+                            FROM cnUser u
+                            JOIN cnPassword p
+                                ON u.userID = p.FK_userID
+                            JOIN cnRole r
+                                ON u.FK_roleID = r.roleID
                             WHERE u.userEmail = @userEmail
                         `);
                     console.log(result);
@@ -92,10 +95,10 @@ class Account {
                     if (!bcrypt_result) throw { statusCode: 404, errorMessage: 'User not found with provided credentials.' }
 
                     const accountResponse = {
-                        userId: result.recordset[0].userId,
+                        userID: result.recordset[0].userID,
                         userName: result.recordset[0].userName,
                         userRole: {
-                            roleId: result.recordset[0].roleId,
+                            roleID: result.recordset[0].roleID,
                             roleName: result.recordset[0].roleName
                         }
                     }
@@ -136,10 +139,10 @@ class Account {
                     const result = await pool.request()
                         .input('userEmail', sql.NVarChar(255), accountObj.userEmail)
                         .query(`
-                            SELECT u.userId, u.userName, r.roleId, r.roleName
-                            FROM liloUser u
-                            JOIN liloRole r
-                                ON u.FK_roleId = r.roleId
+                            SELECT u.userID, u.userName, r.roleID, r.roleName
+                            FROM cnUser u
+                            JOIN cnRole r
+                                ON u.FK_roleID = r.roleID
                             WHERE u.userEmail = @userEmail 
                         `);
                     console.log(result);
@@ -149,10 +152,10 @@ class Account {
                     if (result.recordset.length > 1) throw { statusCode: 500, errorMessage: 'Multiple hits of unique data. Corrupt database.' }
 
                     const accountResponse = {
-                        userId: result.recordset[0].userId,
+                        userID: result.recordset[0].userID,
                         userName: result.recordset[0].userName,
                         userRole: {
-                            roleId: result.recordset[0].roleId,
+                            roleID: result.recordset[0].roleID,
                             roleName: result.recordset[0].roleName
                         }
                     }
@@ -211,16 +214,16 @@ class Account {
                             .input('userEmail', sql.NVarChar(255), this.userEmail)
                             .input('hashedPassword', sql.NVarChar(255), hashedPassword)
                             .query(`
-                        INSERT INTO liloUser([userName], [userEmail], [FK_roleId])
+                        INSERT INTO cnUser([userName], [userEmail], [FK_roleID])
                         VALUES (@userName, @userEmail, 2);
 
-                        SELECT u.userId, u.userName, r.roleId, r.roleName
-                        FROM liloUser u
-                        JOIN liloRole r
-                            ON u.FK_roleId = r.roleId
-                        WHERE u.userId = SCOPE_IDENTITY();
+                        SELECT u.userID, u.userName, r.roleID, r.roleName
+                        FROM cnUser u
+                        JOIN cnRole r
+                            ON u.FK_roleID = r.roleID
+                        WHERE u.userID = SCOPE_IDENTITY();
 
-                        INSERT INTO liloPassword([passwordValue], [FK_userId])
+                        INSERT INTO cnPassword([passwordValue], [FK_userID])
                         VALUES (@hashedPassword, SCOPE_IDENTITY());
                     `);
                         console.log(result00);
@@ -231,7 +234,7 @@ class Account {
                             userId: result00.recordset[0].userId,
                             userName: result00.recordset[0].userName,
                             userRole: {
-                                roleId: result00.recordset[0].roleId,
+                                roleID: result00.recordset[0].roleID,
                                 roleName: result00.recordset[0].roleName
                             }
                         }
