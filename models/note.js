@@ -59,7 +59,7 @@ class Note {
         return schema.validate(validateNoteObj);
     }
 
-    static readAll(authorid) {
+    static readAll(noteid) {
         return new Promise((resolve, reject) => {
             (async () => {
                 // › › connect to DB
@@ -77,26 +77,12 @@ class Note {
                     const pool = await sql.connect(con);
                     let result;
 
-                    if (authorid) {
+                    if (noteid) {
                         result = await pool.request()
-                            .input('authorid', sql.Int(), authorid)
+                            .input('noteid', sql.Int(), noteid)
                             .query(`
-                            SELECT b.bookid, b.title, b.year, b.link, a.authorid, a.firstname, a.lastname 
-                            FROM liloBook b
-                            JOIN liloBookAuthor ba
-                                ON b.bookid = ba.FK_bookid
-                            JOIN liloAuthor a
-                                ON ba.FK_authorid = a.authorid
-                            WHERE b.bookid IN (
-                                SELECT b.bookid
-                                FROM liloBook b
-                                JOIN liloBookAuthor ba
-                                    ON b.bookid = ba.FK_bookid
-                                JOIN liloAuthor a
-                                    ON ba.FK_authorid = a.authorid
-                                WHERE a.authorid = @authorid
-                            )
-                            ORDER BY b.bookid, a.authorid
+                            SELECT * 
+                            FROM cnNote
                         `);
                     } else {
                         result = await pool.request()
