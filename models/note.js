@@ -15,7 +15,7 @@ class Note {
         this.title = bookObj.title;
         this.year = bookObj.year;
         this.link = bookObj.link;
-        if (noteObj.authors) this.authors = _.cloneDeep(noteObj.authors);
+        // if (noteObj.authors) this.authors = _.cloneDeep(noteObj.authors);
     }
 
     copy(noteObj) {
@@ -23,7 +23,7 @@ class Note {
         if (noteObj.title) this.title = noteObj.title;
         if (noteObj.year) this.year = noteObj.year;
         if (noteObj.link) this.link = noteObj.link;
-        if (noteObj.authors) this.authors = _.cloneDeep(noteObj.authors);
+        // if (noteObj.authors) this.authors = _.cloneDeep(noteObj.authors);
     }
 
     static validate(validateNoteObj) {
@@ -40,20 +40,20 @@ class Note {
                 .uri()
                 .max(255)
                 .allow(null),   // <-- need to allow null values for links
-            authors: Joi.array()
-                .items(
-                    Joi.object({
-                        authorid: Joi.number()
-                            .integer()
-                            .min(1)
-                            .required(),
-                        firstname: Joi.string()
-                            .max(50),
-                        lastname: Joi.string()
-                            .min(1)
-                            .max(50)
-                    })
-                )
+            // authors: Joi.array()
+            //     .items(
+            //         Joi.object({
+            //             authorid: Joi.number()
+            //                 .integer()
+            //                 .min(1)
+            //                 .required(),
+            //             firstname: Joi.string()
+            //                 .max(50),
+            //             lastname: Joi.string()
+            //                 .min(1)
+            //                 .max(50)
+            //         })
+            //     )
         });
 
         return schema.validate(validateNoteObj);

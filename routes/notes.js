@@ -7,14 +7,14 @@ const Note = require('../models/note');
 
 router.get('/', async (req, res) => {
     // need to call the Note class for DB access...
-    let authorid;
-    if (req.query.author) {
-        authorid = parseInt(req.query.author);
-        if (!authorid) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: ?author= should refer an author id (integer)' }));
+    let noteid;
+    if (req.query.note) {
+        noteid = parseInt(req.query.note);
+        if (!noteid) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: ?author= should refer an author id (integer)' }));
     }
 
     try {
-        const notes = await Note.readAll(authorid);
+        const notes = await Note.readAll(noteid);
         return res.send(JSON.stringify(notes));
     } catch (err) {
         return res.status(500).send(JSON.stringify({ errorMessage: err }));
