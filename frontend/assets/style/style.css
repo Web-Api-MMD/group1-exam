@@ -4,6 +4,12 @@ body {
     padding: 0;
 }
 
+a {
+    text-decoration: none;
+    color: black;
+    padding: 2vh 2vw;
+}
+
 .menu {
     display: flex;
     flex-direction: row;
@@ -11,13 +17,18 @@ body {
     align-items: center;
     background-color: #FEFEFA;
     padding: 0 8vw;
-    box-shadow: 0px 6px 22px 1px black;
+
+    position: sticky;
+    top: 0;
+
+    box-shadow: 0px 0px 20px 1px #000000a2;
 }
+
 
 .menu ul {
     width: fit-content;
     display: flex;
-    flex-direction: row; 
+    flex-direction: row;
     justify-content: space-between;
     align-items: center;
     list-style: none;
@@ -28,22 +39,15 @@ body {
     margin-right: 2vw;
 }
 
-.menu ul li a {
-    text-decoration: none;
-    color: black;
-    padding: 1vh 2vw;
-}
-
-#signUp {
+.signUp {
     background-color: #FFC85C;
     border-radius: 5px;
+    padding: 2vh 2vw;
 }
-
 
 #frontPage {
     color: white;
     background-color: #1E5A69;
-
     display: flex;
     flex-direction: row;
     justify-content: space-between;
