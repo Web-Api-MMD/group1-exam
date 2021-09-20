@@ -11,13 +11,13 @@ body {
     align-items: center;
     background-color: #FEFEFA;
     padding: 0 8vw;
-    box-shadow: 0 5vh black blur;
+    box-shadow: 0px 6px 22px 1px black;
 }
 
 .menu ul {
     width: fit-content;
     display: flex;
-    flex-direction: row;
+    flex-direction: row; 
     justify-content: space-between;
     align-items: center;
     list-style: none;
