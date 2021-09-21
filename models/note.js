@@ -8,38 +8,38 @@ const Joi = require('joi');
 const _ = require('lodash');
 
 const Author = require('./author');
+const { valid } = require('joi');
 
 class Note {
     constructor(noteObj) {
-        this.noteid = bookObj.noteid;
-        this.title = bookObj.title;
-        this.year = bookObj.year;
-        this.link = bookObj.link;
+        this.noteID = noteObj.noteID;
+        this.noteName = noteObj.noteName;
+        this.noteContent = noteObj.noteContent;
         // if (noteObj.authors) this.authors = _.cloneDeep(noteObj.authors);
     }
 
     copy(noteObj) {
-        // if (bookObj.bookid) this.bookid = bookObj.bookid;
-        if (noteObj.title) this.title = noteObj.title;
-        if (noteObj.year) this.year = noteObj.year;
-        if (noteObj.link) this.link = noteObj.link;
+        if (noteObj.noteID) this.noteID = noteObj.noteID;
+        if (noteObj.noteName) this.noteName = noteObj.noteName;
+        if (noteObj.noteContent) this.noteContent = noteObj.noteContent;
         // if (noteObj.authors) this.authors = _.cloneDeep(noteObj.authors);
     }
 
     static validate(validateNoteObj) {
         const schema = Joi.object({
-            noteid: Joi.number()
+            noteID: Joi.number()
                 .integer()
                 .min(1),
-            title: Joi.string()
+            noteName: Joi.string()
                 .min(1)
-                .max(255),
-            year: Joi.number()
-                .integer(),
-            link: Joi.string()
-                .uri()
-                .max(255)
-                .allow(null),   // <-- need to allow null values for links
+                .max(50)
+                .required(),
+            noteContent: Joi.string()
+                .min(1),
+            // link: Joi.string()
+            //     .uri()
+            //     .max(255)
+            //     .allow(null),   // <-- need to allow null values for links
             // authors: Joi.array()
             //     .items(
             //         Joi.object({
@@ -62,6 +62,7 @@ class Note {
     static readAll(noteid) {
         return new Promise((resolve, reject) => {
             (async () => {
+                console.log('test 0');
                 // › › connect to DB
                 // › › create SQL query string (SELECT Book JOIN BookAuthor JOIN Author)
                 // › › if authorid, add WHERE authorid to query string
@@ -74,56 +75,61 @@ class Note {
                 //      right now only the author with the authorid is listed on the book in the response
 
                 try {
+                    console.log('test 1');
+
                     const pool = await sql.connect(con);
                     let result;
 
+                    // if (userid) {
+                    //     result = await pool.request()
+                    //         .input('userID', sql.Int(), userid)
+                    //         .query(`
+                    //         SELECT n.noteID, n.noteName, n.noteContent, n.FK_userID 
+                    //         FROM cnNote n
+                    //         WHERE n.FK_userID = @userID
+                    //         ORDER BY n.noteID, n.FK_userID
+                    //     `);
+                    // }
                     if (noteid) {
                         result = await pool.request()
-                            .input('noteid', sql.Int(), noteid)
+                            .input('noteID', sql.Int(), noteid)
                             .query(`
-                            SELECT * 
-                            FROM cnNote
-                        `);
-                    } else {
-                        result = await pool.request()
-                            .query(`
-                            SELECT b.bookid, b.title, b.year, b.link, a.authorid, a.firstname, a.lastname 
-                            FROM liloBook b
-                            JOIN liloBookAuthor ba
-                                ON b.bookid = ba.FK_bookid
-                            JOIN liloAuthor a
-                                ON ba.FK_authorid = a.authorid
-                            ORDER BY b.bookid, a.authorid
+                            SELECT n.noteID, n.noteName, n.noteContent, n.FK_userID 
+                            FROM cnNote n
+                            WHERE n.noteID = @noteID
+                            ORDER BY n.noteID, n.FK_userID
                         `);
                     }
 
+                     else {
+                        console.log('test 2');
+                        result = await pool.request()
+                            .query(`
+                            SELECT n.noteID, n.noteName, n.noteContent, n.FK_userID 
+                            FROM cnNote n
+                            ORDER BY n.noteID, n.FK_userID
+                        `);
+                    }
+                    console.log(result.recordset + ' log af result recordset');
                     const notes = [];   // this is NOT validated yet
                     let lastNoteIndex = -1;
                     result.recordset.forEach(record => {
-                        if (books[lastNoteIndex] && record.noteid == notes[lastNoteIndex].noteid) {
+                        if (notes[lastNoteIndex] && record.noteid == notes[lastNoteIndex].noteid) {
                             console.log(`Note with id ${record.noteid} already exists.`);
-                            const newAuthor = {
-                                authorid: record.authorid,
-                                firstname: record.firstname,
-                                lastname: record.lastname
+                            const newUser = {
+                                userID: record.userID,
+                                userName: record.userName,
+                                userEmail: record.userEmail
                             }
-                            note[lastNoteIndex].authors.push(newAuthor);
+                            note[lastNoteIndex].authors.push(newUser);
                         } else {
                             console.log(`Note with id ${record.noteid} is a new note.`)
                             const newNote = {
-                                noteid: record.noteid,
-                                title: record.title,
-                                year: record.year,
-                                link: record.link,
-                                authors: [
-                                    {
-                                        authorid: record.authorid,
-                                        firstname: record.firstname,
-                                        lastname: record.lastname
-                                    }
-                                ]
+                                noteID: record.noteID,
+                                noteName: record.noteName,
+                                noteContent: record.noteContent,
                             }
-                            books.push(newNote);
+                            notes.push(newNote);
                             lastNoteIndex++;
                         }
                     });
@@ -135,8 +141,9 @@ class Note {
 
                         validNotes.push(new Note(note));
                     });
-
+                    console.log(validNotes + ' valid notes')
                     resolve(validNotes);
+                    // resolve(notes);
 
                 } catch (error) {
                     reject(error);
@@ -148,7 +155,7 @@ class Note {
         });
     }
 
-    static readById(bookid) {
+    static readById(noteid) {
         return new Promise((resolve, reject) => {
             (async () => {
                 // › › connect to DB
