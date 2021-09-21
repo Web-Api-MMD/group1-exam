@@ -8,10 +8,12 @@ const router = express.Router();
 
 // previously Login from ../models/login
 const Account = require('../models/account');
+// const Note = require('../models/note');
 const jwt = require('jsonwebtoken');
 const config = require('config');
 
 const secret = config.get('jwt_secret_key');
+
 
 // previously '/'
 router.post('/login', async (req, res) => {

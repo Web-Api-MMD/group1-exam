@@ -224,17 +224,20 @@ class Note {
 
                     console.log('Resultat af notes: ' + JSON.stringify(notesByUserID));
 
-                    if (notesByUserID.length == 0) throw { statusCode: 404, errorMessage: `Note not found with provided noteid: ${noteid}` }
-                    if (notesByUserID.length > 1) throw { statusCode: 500, errorMessage: `Multiple hits of unique data. Corrupt database, noteid: ${noteid}` }
+                    if (notesByUserID.length == 0) throw { statusCode: 404, errorMessage: `User not found with provided userID: ${userid}` }
+                    // if (notesByUserID.length > 1) throw { statusCode: 500, errorMessage: `Multiple hits of unique data. Corrupt database, userID: ${userid}` }
 
                     const { error } = Note.validate(notesByUserID);
-                    if (error) throw { statusCode: 500, errorMessage: `Corrupt Note informaion in database, noteid: ${noteid}` }
+                    // if (error) throw { statusCode: 500, errorMessage: `Corrupt Note informaion in database, userID: ${userid}` }
 
-                    resolve(new Note(notesByUserID));
-                    // resolve(notesByUserID);
+                    // resolve(new Note(notesByUserID));
+                    resolve(notesByUserID);
+                    console.log('userid efter resolve');
+
 
                 } catch (error) {
                     console.log('test userid log error');
+                    console.log(error);
 
                     reject(error);
                 }
