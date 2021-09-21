@@ -8,7 +8,6 @@ const Joi = require('joi');
 const _ = require('lodash');
 
 const Author = require('./author');
-const { valid } = require('joi');
 
 class Note {
     constructor(noteObj) {
@@ -148,17 +147,7 @@ class Note {
                     const notes = [];   // this is NOT validated yet
                     let lastNoteIndex = -1;
                     result.recordset.forEach(record => {
-                        if (record.noteID) {
-                        // if (notes[lastNoteIndex] && record.noteid == notes[lastNoteIndex].noteid) {
-                            console.log(`Note with id ${record.noteid} already exists.`);
-                            // const newAuthor = {
-                            //     authorid: record.authorid,
-                            //     firstname: record.firstname,
-                            //     lastname: record.lastname
-                            // }
-                            // notes[lastNoteIndex].authors.push(newAuthor);
-                        } else {
-                            console.log(`Note with id ${record.noteid} is a new note.`)
+                        if (record.noteID == noteid) {
                             const newNote = {
                                 noteID: record.noteID,
                                 noteName: record.noteName,
@@ -166,7 +155,7 @@ class Note {
                             }
                             notes.push(newNote);
                             lastNoteIndex++;
-                        }
+                        };
                     });
 
                     if (notes.length == 0) throw { statusCode: 404, errorMessage: `Note not found with provided noteid: ${noteid}` }
