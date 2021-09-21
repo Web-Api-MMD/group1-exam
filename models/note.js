@@ -85,15 +85,6 @@ class Note {
                     const notes = [];   // this is NOT validated yet
                     let lastNoteIndex = -1;
                     result.recordset.forEach(record => {
-                        // if (notes[lastNoteIndex] && record.noteid == notes[lastNoteIndex].noteid) {
-                        //     console.log(`Note with id ${record.noteid} already exists.`);
-                        //     // const newUser = {
-                        //     //     userID: record.userID,
-                        //     //     userName: record.userName,
-                        //     //     userEmail: record.userEmail
-                        //     // }
-                        //     // note[lastNoteIndex].accounts.push(newUser);
-                        // } 
                         if (notes.noteid) {
                             console.log(`Note with id ${record.noteID} already exists.`);
                             const newNote = {
