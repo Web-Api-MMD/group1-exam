@@ -66,11 +66,9 @@ router.get('/user/:userID', async (req, res) => {
     try {
          if (req.params.userID) {
             const userNotes = await Note.readByUserId(userid);
-            console.log(req.params.userID + ' hej ok');
             return res.send(JSON.stringify(userNotes));
         }
     } catch (err) {
-        console.log(err + ' error fra handler');
         return res.status(500).send(JSON.stringify({ errorMessage: err + ' catch fra route handler' }));
     }
 });

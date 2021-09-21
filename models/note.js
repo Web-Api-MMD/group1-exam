@@ -16,7 +16,6 @@ class Note {
         this.noteContent = noteObj.noteContent;
         // if (noteObj.authors) this.authors = _.cloneDeep(noteObj.authors);
     }
-
     copy(noteObj) {
         if (noteObj.noteID) this.noteID = noteObj.noteID;
         if (noteObj.noteName) this.noteName = noteObj.noteName;
@@ -232,11 +231,11 @@ class Note {
 
                     // resolve(new Note(notesByUserID));
                     resolve(notesByUserID);
-                    console.log('userid efter resolve');
+                    // console.log('userid efter resolve');
 
 
                 } catch (error) {
-                    console.log('test userid log error');
+                    // console.log('test userid log error');
                     console.log(error);
 
                     reject(error);
