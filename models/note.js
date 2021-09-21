@@ -35,25 +35,7 @@ class Note {
                 .max(50)
                 .required(),
             noteContent: Joi.string()
-                .min(1),
-            // link: Joi.string()
-            //     .uri()
-            //     .max(255)
-            //     .allow(null),   // <-- need to allow null values for links
-            // authors: Joi.array()
-            //     .items(
-            //         Joi.object({
-            //             authorid: Joi.number()
-            //                 .integer()
-            //                 .min(1)
-            //                 .required(),
-            //             firstname: Joi.string()
-            //                 .max(50),
-            //             lastname: Joi.string()
-            //                 .min(1)
-            //                 .max(50)
-            //         })
-            //     )
+                .min(1)
         });
 
         return schema.validate(validateNoteObj);
@@ -79,17 +61,6 @@ class Note {
 
                     const pool = await sql.connect(con);
                     let result;
-
-                    // if (userid) {
-                    //     result = await pool.request()
-                    //         .input('userID', sql.Int(), userid)
-                    //         .query(`
-                    //         SELECT n.noteID, n.noteName, n.noteContent, n.FK_userID 
-                    //         FROM cnNote n
-                    //         WHERE n.FK_userID = @userID
-                    //         ORDER BY n.noteID, n.FK_userID
-                    //     `);
-                    // }
                     if (noteid) {
                         result = await pool.request()
                             .input('noteID', sql.Int(), noteid)
@@ -99,29 +70,31 @@ class Note {
                             WHERE n.noteID = @noteID
                             ORDER BY n.noteID, n.FK_userID
                         `);
-                    }
-
-                     else {
+                    } else {
                         console.log('test 2');
                         result = await pool.request()
                             .query(`
-                            SELECT n.noteID, n.noteName, n.noteContent, n.FK_userID 
+                            SELECT * 
                             FROM cnNote n
-                            ORDER BY n.noteID, n.FK_userID
                         `);
                     }
                     console.log(result.recordset + ' log af result recordset');
+                    
+                    
                     const notes = [];   // this is NOT validated yet
                     let lastNoteIndex = -1;
                     result.recordset.forEach(record => {
-                        if (notes[lastNoteIndex] && record.noteid == notes[lastNoteIndex].noteid) {
+                        // if (notes[lastNoteIndex] && record.noteid == notes[lastNoteIndex].noteid) {
+                        //     console.log(`Note with id ${record.noteid} already exists.`);
+                        //     // const newUser = {
+                        //     //     userID: record.userID,
+                        //     //     userName: record.userName,
+                        //     //     userEmail: record.userEmail
+                        //     // }
+                        //     // note[lastNoteIndex].accounts.push(newUser);
+                        // } 
+                        if (notes.noteid) {
                             console.log(`Note with id ${record.noteid} already exists.`);
-                            const newUser = {
-                                userID: record.userID,
-                                userName: record.userName,
-                                userEmail: record.userEmail
-                            }
-                            note[lastNoteIndex].authors.push(newUser);
                         } else {
                             console.log(`Note with id ${record.noteid} is a new note.`)
                             const newNote = {
@@ -143,14 +116,11 @@ class Note {
                     });
                     console.log(validNotes + ' valid notes')
                     resolve(validNotes);
-                    // resolve(notes);
 
                 } catch (error) {
                     reject(error);
                 }
-
                 sql.close();
-
             })();
         });
     }
@@ -167,15 +137,12 @@ class Note {
                 try {
                     const pool = await sql.connect(con);
                     const result = await pool.request()
-                        .input('noteid', sql.Int(), noteid)
+                        .input('noteID', sql.Int(), noteid)
                         .query(`
-                            SELECT b.noteid, b.title, b.year, b.link, a.authorid, a.firstname, a.lastname 
-                            FROM liloBook b
-                            JOIN liloBookAuthor ba
-                                ON b.noteid = ba.FK_noteid
-                            JOIN liloAuthor a
-                                ON ba.FK_authorid = a.authorid
-                            WHERE b.noteid = @noteid
+                            SELECT n.noteID, n.noteName, n.noteContent, n.FK_userID 
+                            FROM cnNote n
+                            WHERE n.noteID = @noteID
+                            ORDER BY n.noteID, n.FK_userID
                     `)
 
                     const notes = [];   // this is NOT validated yet
