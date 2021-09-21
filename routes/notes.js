@@ -7,24 +7,48 @@ const Note = require('../models/note');
 router.get('/', async (req, res) => {
     // need to call the Book class for DB access...
     let noteid;
-    let userid;
+    // let userid;
 
     if (req.query.noteID) {
         noteid = parseInt(req.query.noteID);
         console.log(noteid + ' noteid fra route handler');
         if (!noteid) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: ?noteID= should refer an author id (integer)' }));
     }
-    else if (req.query.userID) {
-        userid = parseInt(req.query.userID);
-        console.log(userid + ' userid fra route handler');
-        if (!userid) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: ?userID= should refer an author id (integer)' }));
-    }
+    // else if (req.query.userID) {
+    //     userid = parseInt(req.query.userID);
+    //     console.log(userid + ' userid fra route handler');
+    //     if (!userid) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: ?userID= should refer an author id (integer)' }));
+    // }
 
     try {
         if (req.query.noteID) {
             const notes = await Note.readAll(noteid);
             return res.send(JSON.stringify(notes));
-        } else if (req.query.userID) {
+        } 
+        // else if (req.query.userID) {
+        //     const notesByUserID = await Note.readByUserId(userid);
+        //     console.log(notesByUserID);
+        //     return res.send(JSON.stringify(notesByUserID));
+        // }
+    } catch (err) {
+        return res.status(500).send(JSON.stringify({ errorMessage: err + ' catch fra route handler' }));
+    }
+});
+
+router.get('/user/:userID', async (req, res) => {
+    // need to call the Book class for DB access...
+    let userid;
+    console.log('test af userid');
+    console.log(req.params.userID);
+
+    if (req.params.userID) {
+        userid = parseInt(req.params.userID);
+        console.log(userid + ' userid fra route handler');
+        if (!userid) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: ?userID= should refer an author id (integer)' }));
+    }
+
+    try {
+         if (req.params.userID) {
             const notesByUserID = await Note.readByUserId(userid);
             console.log(notesByUserID);
             return res.send(JSON.stringify(notesByUserID));
