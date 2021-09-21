@@ -7,47 +7,60 @@ const Note = require('../models/note');
 router.get('/', async (req, res) => {
     // need to call the Book class for DB access...
     let noteid;
+    let userid;
+
     if (req.query.noteID) {
         noteid = parseInt(req.query.noteID);
         console.log(noteid + ' noteid fra route handler');
-        if (!noteid) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: ?author= should refer an author id (integer)' }));
+        if (!noteid) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: ?noteID= should refer an author id (integer)' }));
+    }
+    else if (req.query.userID) {
+        userid = parseInt(req.query.userID);
+        console.log(userid + ' userid fra route handler');
+        if (!userid) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: ?userID= should refer an author id (integer)' }));
     }
 
     try {
-        const notes = await Note.readAll(noteid);
-        console.log(notes);
-        return res.send(JSON.stringify(notes));
+        if (req.query.noteID) {
+            const notes = await Note.readAll(noteid);
+            return res.send(JSON.stringify(notes));
+        } else if (req.query.userID) {
+            const notesByUserID = await Note.readByUserId(userid);
+            console.log(notesByUserID);
+            return res.send(JSON.stringify(notesByUserID));
+        }
     } catch (err) {
         return res.status(500).send(JSON.stringify({ errorMessage: err + ' catch fra route handler' }));
     }
 });
 
-router.get('/:noteID', async (req, res) => {
-    // › › validate req.params.noteid as noteid
-    // › › call await note.readById(req.params.noteid)
-    const { error } = Note.validate(req.params);
-    if (error) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: noteid has to be an integer', errorDetail: error.details[0].message }));
-    try {
-        const note = await Note.readById(req.params.noteID);
-        return res.send(JSON.stringify(note));
-    } catch (err) {
-        return res.status(500).send(JSON.stringify({ errorMessage: err }));
-    }
-});
 
-router.get('/user/:userID', async (req, res) => {
-    // › › validate req.params.noteid as noteid
-    // › › call await note.readById(req.params.noteid)
-    console.log(req.params);
-    const { error } = Note.validate(req.params);
-    if (error) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: noteid has to be an integer', errorDetail: error.details[0].message }));
-    try {
-        const note = await Note.readByUserId(req.params.userID);
-        return res.send(JSON.stringify(note));
-    } catch (err) {
-        return res.status(500).send(JSON.stringify({ errorMessage: err }));
-    }
-});
+// router.get('/:noteID', async (req, res) => {
+//     // › › validate req.params.noteid as noteid
+//     // › › call await note.readById(req.params.noteid)
+//     const { error } = Note.validate(req.params);
+//     if (error) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: noteid has to be an integer', errorDetail: error.details[0].message }));
+//     try {
+//         const note = await Note.readById(req.params.noteID);
+//         return res.send(JSON.stringify(note));
+//     } catch (err) {
+//         return res.status(500).send(JSON.stringify({ errorMessage: err }));
+//     }
+// });
+
+// router.get('/user/:userID', async (req, res) => {
+//     // › › validate req.params.noteid as noteid
+//     // › › call await note.readById(req.params.noteid)
+//     console.log(req.params);
+//     const { error } = Note.validate(req.params);
+//     if (error) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: noteid has to be an integer', errorDetail: error.details[0].message }));
+//     try {
+//         const note = await Note.readByUserId(req.params.userID);
+//         return res.send(JSON.stringify(note));
+//     } catch (err) {
+//         return res.status(500).send(JSON.stringify({ errorMessage: err }));
+//     }
+// });
 
 router.post('/', async (req, res) => {
     // › › validate req.body (payload) as note --> authors must have authorid!
