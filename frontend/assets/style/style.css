@@ -11,6 +11,7 @@ a {
 
 .blue {
     background-color: #1E5A69;
+    color: white;
 }
 
 .white {
@@ -45,14 +46,49 @@ a {
     margin-right: 2vw;
 }
 
-.signUp {
+.buttonBasic {
     background-color: #FFC85C;
+    color: black;
     border-radius: 5px;
     padding: 2vh 2vw;
+    border: none;
 }
 
-#frontPage {
+.menuLoggedIn {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 8vw;
+
+    position: sticky;
+    top: 0;
+}
+
+.menuLoggedIn ul {
+    width: fit-content;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    list-style: none;
+}
+
+.menuLoggedIn ul li a, .menuLoggedIn a {
     color: white;
+}
+
+.signOut {
+    background-color: none;
+    border-radius: 5px;
+    padding: 2vh 2vw;
+    border: solid white 2px;
+    margin-left: 2vw;
+
+}
+
+
+#frontPage {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -68,6 +104,50 @@ a {
 #frontPage object {
     width: 45%;
     height: auto;
+}
+
+.logInSignUpMain{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+}
+
+.logInSignUp {
+    background-color: #E38D45;
+    padding: 1.5rem 3rem 3rem 3rem;
+    border-radius: 5px;
+}
+
+.logInSignUp input {
+    margin-bottom: 2rem;
+    border-radius: 5px;
+    padding: 1rem;
+    width: 20vw;
+    border: none;
+}
+
+#signupButton, #loginButton {
+    box-shadow: 0px 0px 20px 1px #000000a2;
+}
+
+.discover {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+}
+
+.discover h2 {
+    color: #E38D45;
+}
+
+.discover p, .discover h2 {
+    width: 40%;
+    text-align: center;
+    margin-bottom: 6vh;
 }
 
 footer {
