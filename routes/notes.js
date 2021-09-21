@@ -25,15 +25,17 @@ router.get('/', async (req, res) => {
 
 
 
-router.get('/:noteid', async (req, res) => {
+router.get('/:noteID', async (req, res) => {
     // › › validate req.params.noteid as noteid
     // › › call await note.readById(req.params.noteid)
-    console.log(req.params + ' fra handler');
-
-    const { error } = Note.validate(req.params);
+    let noteid = parseInt(req.query.noteID);
+    console.log(noteid + ' noteid fra handler');
+    console.log(req.params.noteID + ' fra handler');
+    console.log(JSON.stringify(req.params));
+    const { error } = Note.validate(req.params.noteID);
     if (error) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: noteid has to be an integer', errorDetail: error.details[0].message }));
     try {
-        const note = await Note.readById(req.params.noteid);
+        const note = await Note.readById(req.params.noteID);
         return res.send(JSON.stringify(note));
     } catch (err) {
         return res.status(500).send(JSON.stringify({ errorMessage: err }));

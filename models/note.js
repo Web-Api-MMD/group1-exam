@@ -32,8 +32,8 @@ class Note {
                 .min(1),
             noteName: Joi.string()
                 .min(1)
-                .max(50)
-                .required(),
+                .max(50),
+                // .required(),
             noteContent: Joi.string()
                 .min(1)
         });
@@ -93,7 +93,7 @@ class Note {
                         //     // }
                         //     // note[lastNoteIndex].accounts.push(newUser);
                         // } 
-                        if (notes.noteid) {
+                        if (record.noteid) {
                             console.log(`Note with id ${record.noteid} already exists.`);
                         } else {
                             console.log(`Note with id ${record.noteid} is a new note.`)
@@ -148,39 +148,32 @@ class Note {
                     const notes = [];   // this is NOT validated yet
                     let lastNoteIndex = -1;
                     result.recordset.forEach(record => {
-                        if (notes[lastNoteIndex] && record.noteid == notes[lastNoteIndex].noteid) {
+                        if (record.noteID) {
+                        // if (notes[lastNoteIndex] && record.noteid == notes[lastNoteIndex].noteid) {
                             console.log(`Note with id ${record.noteid} already exists.`);
-                            const newAuthor = {
-                                authorid: record.authorid,
-                                firstname: record.firstname,
-                                lastname: record.lastname
-                            }
-                            notes[lastNoteIndex].authors.push(newAuthor);
+                            // const newAuthor = {
+                            //     authorid: record.authorid,
+                            //     firstname: record.firstname,
+                            //     lastname: record.lastname
+                            // }
+                            // notes[lastNoteIndex].authors.push(newAuthor);
                         } else {
                             console.log(`Note with id ${record.noteid} is a new note.`)
                             const newNote = {
-                                noteid: record.noteid,
-                                title: record.title,
-                                year: record.year,
-                                link: record.link,
-                                authors: [
-                                    {
-                                        authorid: record.authorid,
-                                        firstname: record.firstname,
-                                        lastname: record.lastname
-                                    }
-                                ]
+                                noteID: record.noteID,
+                                noteName: record.noteName,
+                                noteContent: record.noteContent,
                             }
                             notes.push(newNote);
                             lastNoteIndex++;
                         }
                     });
 
-                    if (notes.length == 0) throw { statusCode: 404, errorMessage: `Book not found with provided bookid: ${bookid}` }
-                    if (notes.length > 1) throw { statusCode: 500, errorMessage: `Multiple hits of unique data. Corrupt database, bookid: ${bookid}` }
+                    if (notes.length == 0) throw { statusCode: 404, errorMessage: `Note not found with provided noteid: ${noteid}` }
+                    if (notes.length > 1) throw { statusCode: 500, errorMessage: `Multiple hits of unique data. Corrupt database, noteid: ${noteid}` }
 
                     const { error } = Note.validate(notes[0]);
-                    if (error) throw { statusCode: 500, errorMessage: `Corrupt Book informaion in database, bookid: ${bookid}` }
+                    if (error) throw { statusCode: 500, errorMessage: `Corrupt Note informaion in database, noteid: ${noteid}` }
 
                     resolve(new Note(notes[0]));
 
