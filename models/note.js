@@ -40,7 +40,7 @@ class Note {
         return schema.validate(validateNoteObj);
     }
 
-    static readAll(noteid, userid) {
+    static readAll(noteid) {
         return new Promise((resolve, reject) => {
             (async () => {
                 console.log('test 0');
@@ -70,16 +70,14 @@ class Note {
                             ORDER BY n.noteID, n.FK_userID
                         `);
                     } else {
-                        console.log('test 2');
+                        console.log('test 3');
                         result = await pool.request()
                             .query(`
                             SELECT * 
                             FROM cnNote n
                         `);
                     }
-                    
-
-                    console.log(result.recordset + ' log af result recordset');
+                    // console.log(JSON.stringify(result.recordset) + ' log af result recordset');
                     
                     
                     const notes = [];   // this is NOT validated yet
@@ -94,10 +92,18 @@ class Note {
                         //     // }
                         //     // note[lastNoteIndex].accounts.push(newUser);
                         // } 
-                        if (record.noteid) {
-                            console.log(`Note with id ${record.noteid} already exists.`);
+                        if (notes.noteid) {
+                            console.log(`Note with id ${record.noteID} already exists.`);
+                            const newNote = {
+                                noteID: record.noteID,
+                                noteName: record.noteName,
+                                noteContent: record.noteContent,
+                            }
+                            notesByUserID.push(newNote);
+                            lastNoteIndex++;
                         } else {
-                            console.log(`Note with id ${record.noteid} is a new note.`)
+                            console.log(`Note with id ${record.noteID} is a new note.`);
+                            console.log(record);
                             const newNote = {
                                 noteID: record.noteID,
                                 noteName: record.noteName,
@@ -109,13 +115,14 @@ class Note {
                     });
 
                     const validNotes = [];
+
                     notes.forEach(note => {
                         const { error } = Note.validate(note);
                         if (error) throw { errorMessage: `Note.validate failed.` };
 
                         validNotes.push(new Note(note));
                     });
-                    console.log(validNotes + ' valid notes')
+                    // console.log(validNotes + ' valid notes');
                     resolve(validNotes);
 
                 } catch (error) {
@@ -150,6 +157,57 @@ class Note {
                     let lastNoteIndex = -1;
                     result.recordset.forEach(record => {
                         if (record.noteID == noteid) {
+                            const newNote = {
+                                noteID: record.noteID,
+                                noteName: record.noteName,
+                                noteContent: record.noteContent,
+                            }
+                            notes.push(newNote);
+                            lastNoteIndex++;
+                        };
+                    });
+
+                    if (notes.length == 0) throw { statusCode: 404, errorMessage: `Note not found with provided noteid: ${noteid}` }
+                    if (notes.length > 1) throw { statusCode: 500, errorMessage: `Multiple hits of unique data. Corrupt database, noteid: ${noteid}` }
+
+                    const { error } = Note.validate(notes[0]);
+                    if (error) throw { statusCode: 500, errorMessage: `Corrupt Note informaion in database, noteid: ${noteid}` }
+
+                    resolve(new Note(notes[0]));
+
+                } catch (error) {
+                    reject(error);
+                }
+
+                sql.close();
+            })();
+        });
+    }
+
+    static readByUserId(userid) {
+        return new Promise((resolve, reject) => {
+            (async () => {
+                // › › connect to DB
+                // › › query DB (SELECT Book JOIN BookAuthor JOIN Author WHERE bookid)
+                // › › restructure DB result into the object structure needed (JOIN --> watch out for duplicates)
+                // › › validate objects
+                // › › close DB connection
+
+                try {
+                    const pool = await sql.connect(con);
+                    const result = await pool.request()
+                        .input('userID', sql.Int(), userid)
+                        .query(`
+                            SELECT n.noteID, n.noteName, n.noteContent, n.FK_userID 
+                            FROM cnNote n
+                            WHERE n.FK_userID = @userID
+                            ORDER BY n.noteID
+                    `);
+
+                    const notes = [];   // this is NOT validated yet
+                    let lastNoteIndex = -1;
+                    result.recordset.forEach(record => {
+                        if (record.userID == userid) {
                             const newNote = {
                                 noteID: record.noteID,
                                 noteName: record.noteName,

@@ -5,7 +5,6 @@ const Note = require('../models/note');
 
 
 router.get('/', async (req, res) => {
-    console.log(req.query.noteID + ' req.query.noteID');
     // need to call the Book class for DB access...
     let noteid;
     if (req.query.noteID) {
@@ -36,13 +35,14 @@ router.get('/:noteID', async (req, res) => {
     }
 });
 
-router.get('/:userID', async (req, res) => {
+router.get('/user/:userID', async (req, res) => {
     // › › validate req.params.noteid as noteid
     // › › call await note.readById(req.params.noteid)
+    console.log(req.params);
     const { error } = Note.validate(req.params);
     if (error) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: noteid has to be an integer', errorDetail: error.details[0].message }));
     try {
-        const note = await Note.readById(req.params.userID);
+        const note = await Note.readByUserId(req.params.userID);
         return res.send(JSON.stringify(note));
     } catch (err) {
         return res.status(500).send(JSON.stringify({ errorMessage: err }));
