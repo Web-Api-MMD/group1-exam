@@ -23,8 +23,6 @@ router.get('/', async (req, res) => {
     }
 });
 
-
-
 router.get('/:noteID', async (req, res) => {
     // › › validate req.params.noteid as noteid
     // › › call await note.readById(req.params.noteid)
@@ -38,22 +36,35 @@ router.get('/:noteID', async (req, res) => {
     }
 });
 
-// router.post('/', async (req, res) => {
-//     // › › validate req.body (payload) as note --> authors must have authorid!
-//     // › › instantiate note = new note(req.body)
-//     // › › call await note.create()
+router.get('/:userID', async (req, res) => {
+    // › › validate req.params.noteid as noteid
+    // › › call await note.readById(req.params.noteid)
+    const { error } = Note.validate(req.params);
+    if (error) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: noteid has to be an integer', errorDetail: error.details[0].message }));
+    try {
+        const note = await Note.readById(req.params.userID);
+        return res.send(JSON.stringify(note));
+    } catch (err) {
+        return res.status(500).send(JSON.stringify({ errorMessage: err }));
+    }
+});
 
-//     const { error } = Note.validate(req.body);
-//     if (error) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: note payload formatted incorrectly', errorDetail: error.details[0].message }));
+router.post('/', async (req, res) => {
+    // › › validate req.body (payload) as note --> authors must have authorid!
+    // › › instantiate note = new note(req.body)
+    // › › call await note.create()
 
-//     try {
-//         const newNote = new Note(req.body);
-//         const note = await newNote.create();
-//         return res.send(JSON.stringify(note));
-//     } catch (err) {
-//         return res.status(500).send(JSON.stringify({ errorMessage: err }));
-//     }
-// });
+    const { error } = Note.validate(req.body);
+    if (error) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: note payload formatted incorrectly', errorDetail: error.details[0].message }));
+
+    try {
+        const newNote = new Note(req.body);
+        const note = await newNote.create();
+        return res.send(JSON.stringify(note));
+    } catch (err) {
+        return res.status(500).send(JSON.stringify({ errorMessage: err }));
+    }
+});
 
 // router.delete('/:noteid', async (req, res) => {
 //     // › › validate req.params.noteid as noteid

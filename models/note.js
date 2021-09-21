@@ -40,7 +40,7 @@ class Note {
         return schema.validate(validateNoteObj);
     }
 
-    static readAll(noteid) {
+    static readAll(noteid, userid) {
         return new Promise((resolve, reject) => {
             (async () => {
                 console.log('test 0');
@@ -77,6 +77,8 @@ class Note {
                             FROM cnNote n
                         `);
                     }
+                    
+
                     console.log(result.recordset + ' log af result recordset');
                     
                     
