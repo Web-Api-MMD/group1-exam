@@ -8,7 +8,7 @@ router.get('/', async (req, res) => {
     // need to call the Book class for DB access...
     let noteid;
     // let userid;
-
+    console.log(req.query.noteID);
     if (req.query.noteID) {
         noteid = parseInt(req.query.noteID);
         console.log(noteid + ' noteid fra route handler');
@@ -25,11 +25,10 @@ router.get('/', async (req, res) => {
             const notes = await Note.readAll(noteid);
             return res.send(JSON.stringify(notes));
         } 
-        // else if (req.query.userID) {
-        //     const notesByUserID = await Note.readByUserId(userid);
-        //     console.log(notesByUserID);
-        //     return res.send(JSON.stringify(notesByUserID));
-        // }
+        else {
+            const allNotes = await Note.readAll();
+            return res.send(JSON.stringify(allNotes));
+        }
     } catch (err) {
         return res.status(500).send(JSON.stringify({ errorMessage: err + ' catch fra route handler' }));
     }

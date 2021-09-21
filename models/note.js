@@ -35,8 +35,8 @@ class Note {
                 // .required(),
             noteContent: Joi.string()
                 .min(1),
-            userID: Joi.number()
-                .integer()
+            // userID: Joi.number()
+            //     .integer()
         });
 
         return schema.validate(validateNoteObj);
