@@ -6,7 +6,9 @@ body {
 a {
     text-decoration: none;
     color: black;
-    padding: 2vh 2vw;
+}
+p {
+    line-height: 1.5rem;
 }
 
 .blue {
@@ -18,21 +20,18 @@ a {
     background-color: #FEFEFA;
 }
 
-.menu {
+.menu, .menuLoggedIn {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 0 8vw;
-
+    padding: 1vh 8vw;
     position: sticky;
     top: 0;
-
     box-shadow: 0px 0px 20px 1px #000000a2;
 }
 
-
-.menu ul {
+.menu ul, .menuLoggedIn ul {
     width: fit-content;
     display: flex;
     flex-direction: row;
@@ -43,6 +42,7 @@ a {
 
 .menu ul li:first-child {
     border-right: 2px solid black;
+    padding-right: 2vw;
     margin-right: 2vw;
 }
 
@@ -51,27 +51,12 @@ a {
     color: black;
     border-radius: 5px;
     padding: 2vh 2vw;
+    margin: 0;
     border: none;
 }
 
-.menuLoggedIn {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 8vw;
-
-    position: sticky;
-    top: 0;
-}
-
-.menuLoggedIn ul {
-    width: fit-content;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    list-style: none;
+.menuLoggedIn ul li a {
+    margin-left: 4vw;
 }
 
 .menuLoggedIn ul li a, .menuLoggedIn a {
@@ -84,9 +69,7 @@ a {
     padding: 2vh 2vw;
     border: solid white 2px;
     margin-left: 2vw;
-
 }
-
 
 #frontPage {
     display: flex;
@@ -106,21 +89,22 @@ a {
     height: auto;
 }
 
-.logInSignUpMain{
+.logInSignUpMain, .addNoteMain {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 80vh;
+    height: fit-content;
+    padding: 3rem 0 5rem 0;
 }
 
-.logInSignUp {
+.logInSignUp, .addNote {
     background-color: #E38D45;
-    padding: 1.5rem 3rem 3rem 3rem;
+    padding: 3rem;
     border-radius: 5px;
 }
 
-.logInSignUp input {
+.logInSignUp input, .addNote input, .addNote textarea {
     margin-bottom: 2rem;
     border-radius: 5px;
     padding: 1rem;
@@ -128,11 +112,16 @@ a {
     border: none;
 }
 
+#newNoteContent {
+    width: 40rem;
+    height: 10rem;
+}
+
 #signupButton, #loginButton {
     box-shadow: 0px 0px 20px 1px #000000a2;
 }
 
-.discover {
+.discoverIntro, .notesMain {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -140,16 +129,93 @@ a {
     height: 80vh;
 }
 
-.discover h2 {
+.discoverIntro h2 {
     color: #E38D45;
 }
 
-.discover p, .discover h2 {
+.discoverIntro p, .discoverIntro h2 {
     width: 40%;
     text-align: center;
     margin-bottom: 6vh;
 }
 
+.discoverNotes {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
+    height: fit-content;
+    padding: 10vh 8vw;
+}
+
+.discoverNotes div {
+    margin-bottom: 2rem;
+}
+
+.category {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #e38c458a;
+    padding: 1vh 2vw;
+    margin-bottom: .5rem;
+}
+
+.description {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #c4c4c483;
+    padding: 1vh 2vw;
+    margin-bottom: .5rem;
+}
+
+.notes {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#noteContent {
+    border: solid 1px #C4C4C4;
+    border-radius: 5px;
+}
+
+.notesMain {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: fit-content;
+    padding: 4rem 0 5rem 0;
+}
+
+.notesMain article {
+    width: 45rem;
+}
+
+.notesMain a {
+    margin-bottom: 3rem;
+    width: 45rem;
+}
+
+.notesMain article table tr td {
+    width: 10rem;
+    height: 3rem;
+}
+
+.notesMain article p {
+    padding-top: 1rem;
+    border-top: solid 1px #C4C4C4;
+}
+
 footer {
-    height: 20vh;
+    height: fit-content;
+    padding: 1vh 8vw;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+
 }
