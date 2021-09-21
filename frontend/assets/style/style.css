@@ -1,0 +1,247 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@700&display=swap');
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+}
+p {
+    line-height: 40px;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 400;
+    font-size: 20px;
+}
+
+h2 {
+    font-family: 'Roboto Slab', serif;
+    font-weight: 700;
+    font-size: 60px;
+    margin: 0;
+}
+
+.blue {
+    background-color: #1E5A69;
+    color: white;
+}
+
+.white {
+    background-color: #FEFEFA;
+}
+
+.menu, .menuLoggedIn {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1vh 8vw;
+    position: sticky;
+    top: 0;
+    box-shadow: 0px 0px 20px 1px #000000a2;
+    
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 600;
+
+}
+
+.menu ul, .menuLoggedIn ul {
+    width: fit-content;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    list-style: none;
+}
+
+.menu ul li:first-child {
+    border-right: 2px solid black;
+    padding-right: 2vw;
+    margin-right: 2vw;
+}
+
+.buttonBasic {
+    background-color: #FFC85C;
+    color: black;
+    border-radius: 5px;
+    padding: 2vh 2vw;
+    margin: 0;
+    border: none;
+    box-shadow: 3px 5px 7px 1px #00000060;
+}
+
+.menuLoggedIn ul li a {
+    margin-left: 4vw;
+}
+
+.menuLoggedIn ul li a, .menuLoggedIn a {
+    color: white;
+}
+
+.signOut {
+    background-color: none;
+    border-radius: 5px;
+    padding: 2vh 2vw;
+    border: solid white 2px;
+    margin-left: 2vw;
+}
+
+#frontPage {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 17vh 8vw 17vh 8vw;
+}
+
+#frontPage article {
+    width: 55%;
+    height: auto;
+}
+
+#frontPage article h2, #frontPage article p{
+    margin-bottom: 2.5rem;
+}
+
+#frontPage object {
+    width: 40%;
+    height: auto;
+}
+
+.logInSignUpMain, .addNoteMain {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: fit-content;
+    padding: 3rem 0 5rem 0;
+}
+.logInSignUpMain h2, .addNoteMain h2, .discoverNotes h2 {
+    margin-bottom: 2.5rem;
+}
+
+.logInSignUp, .addNote {
+    background-color: #E38D45;
+    padding: 3rem;
+    border-radius: 5px;
+}
+
+.logInSignUp input, .addNote input, .addNote textarea {
+    margin-bottom: 2rem;
+    border-radius: 5px;
+    padding: 1rem;
+    width: 20vw;
+    border: none;
+}
+
+#newNoteContent {
+    width: 40rem;
+    height: 10rem;
+}
+
+
+
+.discoverIntro, .notesMain {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+}
+
+.discoverIntro h2 {
+    color: #E38D45;
+}
+
+.discoverIntro p, .discoverIntro h2 {
+    width: 50%;
+    text-align: center;
+    margin-bottom: 6vh;
+}
+
+.discoverNotes {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
+    height: fit-content;
+    padding: 10vh 8vw;
+}
+
+.discoverNotes div {
+    margin-bottom: 2rem;
+}
+
+.category {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #e38c458a;
+    padding: 1vh 2vw;
+    margin-bottom: .5rem;
+}
+
+.description {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #c4c4c483;
+    padding: 1vh 2vw;
+    margin-bottom: .5rem;
+}
+
+.notes {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#noteContent {
+    border: solid 1px #C4C4C4;
+    border-radius: 5px;
+}
+
+.notesMain {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: fit-content;
+    padding: 4rem 0 5rem 0;
+}
+
+.notesMain article {
+    width: 45rem;
+}
+
+.notesMain a {
+    margin-bottom: 3rem;
+    width: 45rem;
+}
+
+.notesMain article table tr td {
+    width: 10rem;
+    height: 3rem;
+}
+
+.notesMain article p {
+    padding-top: 1rem;
+    border-top: solid 1px #C4C4C4;
+}
+
+footer {
+    height: fit-content;
+    padding: 1vh 8vw;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+
+}

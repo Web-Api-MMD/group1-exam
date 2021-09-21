@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./assets/style/style.css">
+    <title>Log in CrossNotes</title>
+</head>
+<body>
+    <nav class="menuLoggedIn blue">
+        <a href="./index.html">
+            <h1>CrossNotes</h1>
+        </a>
+        <ul>
+            <li> <a href="./discoverCategory.html">Notes</a> </li>
+            <li> <a href="./addNote.html"> Add note </a> </li>
+            <li> <a href="" class="signOut">Sign out</a> </li>
+        </ul>
+    </nav>
+
+    <main class="white addNoteMain">
+        <h2>Add note</h2>
+        <section class="addNote">
+            <input type="text" id="noteTitle" name="noteTitle" placeholder="Title"/>
+            <br>
+            <textarea name="newNoteContent" id="newNoteContent" cols="30" rows="10"></textarea>
+            <br>
+            <button id="submitButton" class="buttonBasic">Submit note</button>
+        </section>
+    </main>
+    
+    <footer class="blue">
+        <p> &copy; @2021 Anna, Frederikke & Scott</p>
+    </footer>
+
+    <script src="/frontend/assets/script/script.js"></script>
+</body>
+</html>
