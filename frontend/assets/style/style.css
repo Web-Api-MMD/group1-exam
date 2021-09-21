@@ -207,6 +207,8 @@ h2 {
 #noteContent {
     border: solid 1px #C4C4C4;
     border-radius: 5px;
+    padding: 2vw;
+    width: 20%;
 }
 
 .notesMain {

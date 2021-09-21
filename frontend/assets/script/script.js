@@ -2,62 +2,62 @@ const userEmail = document.querySelector('#userEmail');
 const userPassword = document.querySelector('#userPassword');
 const loginBtn = document.querySelector('#loginButton');
 const logoutBtn = document.querySelector('#logoutButton');
-const publicArticle = document.querySelector('#publicArticle');
+const output = document.querySelector('#output');
 
 
 const APIaddress = 'http://localhost:2090';
 
 // log in
-loginBtn.addEventListener('click', (e) => {
-    if(userEmail.value && userPassword.value) {
-        const payload = {
-            userEmail: userEmail.value,
-            userPassword: userPassword.value
-        }
+// loginBtn.addEventListener('click', (e) => {
+//     if(userEmail.value && userPassword.value) {
+//         const payload = {
+//             userEmail: userEmail.value,
+//             userPassword: userPassword.value
+//         }
 
-        const fetchOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-        }
+//         const fetchOptions = {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json'
+//             },
+//             body: JSON.stringify(payload)
+//         }
 
-        fetch(APIaddress + '/api/accounts/login', fetchOptions)
-        .then(response => {
-            const token = response.headers.get('x-authenticate-token');
-            localStorage.setItem('x-authenticate-token', token); 
-            console.log(token);
+//         fetch(APIaddress + '/api/accounts/login', fetchOptions)
+//         .then(response => {
+//             const token = response.headers.get('x-authenticate-token');
+//             localStorage.setItem('x-authenticate-token', token); 
+//             console.log(token);
 
-            return response.json();
-        })
-        .then(data => {
-            console.log(data);
-            localStorage.setItem('accountInfo', JSON.stringify(data));
+//             return response.json();
+//         })
+//         .then(data => {
+//             console.log(data);
+//             localStorage.setItem('accountInfo', JSON.stringify(data));
 
-            loginDiv.classList.toggle('hidden');
-            logoutDiv.classList.toggle('hidden');
-        })
-        .catch(error => {
-            alert('There was an error. Wrong username or password.');
-        })
+//             loginDiv.classList.toggle('hidden');
+//             logoutDiv.classList.toggle('hidden');
+//         })
+//         .catch(error => {
+//             alert('There was an error. Wrong username or password.');
+//         })
 
-    } else {
-        alert('Please enter user email and password');
-    }
+//     } else {
+//         alert('Please enter user email and password');
+//     }
 
-});
+// });
 
-// log out
-logoutBtn.addEventListener('click', (e) => {
-    window.localStorage.removeItem('x-authenticate-token');
-    window.localStorage.removeItem('accountInfo');
+// // log out
+// logoutBtn.addEventListener('click', (e) => {
+//     window.localStorage.removeItem('x-authenticate-token');
+//     window.localStorage.removeItem('accountInfo');
 
-    console.log('Account logged out yo');
+//     console.log('Account logged out yo');
 
-    loginDiv.classList.toggle('hidden');
-    logoutDiv.classList.toggle('hidden');
-});
+//     loginDiv.classList.toggle('hidden');
+//     logoutDiv.classList.toggle('hidden');
+// });
 
 // on page load
 window.addEventListener('load', (e) => {
@@ -66,23 +66,43 @@ window.addEventListener('load', (e) => {
     const fetchOptions = {
         headers: {
             'Content-Type': 'application/json',
-            
+
         }
     }
-    if(token) fetchOptions.headers['x-authenticate-token'] = token;
+    if (token) fetchOptions.headers['x-authenticate-token'] = token;
     console.log(fetchOptions.headers);
 
-    // part to render public article
+    // part to render notes
     fetchOptions.method = 'GET';
     fetch(APIaddress + '/api/notes', fetchOptions)
-    .then(response => {
-        return response.json()
-    })
-    .then(data => {
-        publicArticle.innerHTML = data.message;
-    })
-    .catch(error => {
-        console.log(error);
-    });
+        .then(response => {
+            return response.json()
+        })
+        .then(data => {
+            for (let i = 0; i < data.length; i++) {
+                let htmlOutput = `
+                <section class="category">
+                    <h3>Notes on CSS</h3>
+                    <a href="./discoverCategory.html">See more</a>
+                </section>
+                <article class="description">
+                    <p>Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore </p>
+                </article>
+                <div class="notes">
+                <article id="noteContent">
+                    <p>${data[i].noteContent}</p>
+                    <h4>${data[i].noteName}</h4>
+                </article>
+                </div>
+                `;
+
+                output.innerHTML += htmlOutput;
+            }
+
+        })
+        .catch(error => {
+            console.log(error);
+        });
+
 
 });
