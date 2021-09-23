@@ -7,3 +7,5 @@ const Categories = require('../models/category');
 router.get('/', (req, res) => {
 
 });
+
+module.exports = router;
