@@ -35,7 +35,7 @@ class Account {
 
     static validateResponse(accountResponse) {
         const schema = Joi.object({
-            userId: Joi.number()
+            userID: Joi.number()
                 .integer()
                 .required(),
             userName: Joi.string()
@@ -44,7 +44,7 @@ class Account {
                 .max(50)
                 .required(),
             userRole: Joi.object({
-                roleId: Joi.number()
+                roleID: Joi.number()
                     .integer()
                     .required(),
                 roleName: Joi.string()
@@ -57,7 +57,7 @@ class Account {
                     .max(255)
             }).required()
         });
-
+        console.log(JSON.stringify(accountResponse) + ' Account response');
         return schema.validate(accountResponse);
     }
 
@@ -86,7 +86,8 @@ class Account {
                                 ON u.FK_roleID = r.roleID
                             WHERE u.userEmail = @userEmail
                         `);
-                    console.log(result);
+                    console.log(result + ' log af result inde i chech credentials');
+                    console.log('Inde i check credentials');
 
                     if (!result.recordset[0]) throw { statusCode: 404, errorMessage: 'User not found with provided credentials.' }
                     if (result.recordset.length > 1) throw { statusCode: 500, errorMessage: 'Multiple hits of unique data. Corrupt database.' }
@@ -99,9 +100,12 @@ class Account {
                         userName: result.recordset[0].userName,
                         userRole: {
                             roleID: result.recordset[0].roleID,
-                            roleName: result.recordset[0].roleName
+                            roleName: result.recordset[0].roleName,
+                            roleDescription: result.recordset[0].roleDescription
                         }
-                    }
+                    };
+                    console.log(accountResponse + ' AccountResponse inde i check credentials');
+
                     // check if the format is correct!
                     // will need a proper validate method for that
 
@@ -214,24 +218,24 @@ class Account {
                             .input('userEmail', sql.NVarChar(255), this.userEmail)
                             .input('hashedPassword', sql.NVarChar(255), hashedPassword)
                             .query(`
-                        INSERT INTO cnUser([userName], [userEmail], [FK_roleID])
-                        VALUES (@userName, @userEmail, 2);
+                                    INSERT INTO cnUser([userName], [userEmail], [FK_roleID])
+                                    VALUES (@userName, @userEmail, 6);
 
-                        SELECT u.userID, u.userName, r.roleID, r.roleName
-                        FROM cnUser u
-                        JOIN cnRole r
-                            ON u.FK_roleID = r.roleID
-                        WHERE u.userID = SCOPE_IDENTITY();
+                                    SELECT u.userID, u.userName, r.roleID, r.roleName
+                                    FROM cnUser u
+                                    JOIN cnRole r
+                                        ON u.FK_roleID = r.roleID
+                                    WHERE u.userID = SCOPE_IDENTITY();
 
-                        INSERT INTO cnPassword([passwordValue], [FK_userID])
-                        VALUES (@hashedPassword, SCOPE_IDENTITY());
-                    `);
+                                    INSERT INTO cnPassword([passwordValue], [FK_userID])
+                                    VALUES (@hashedPassword, SCOPE_IDENTITY());
+                                `);
                         console.log(result00);
                         if (!result00.recordset[0]) throw { statusCode: 500, errorMessage: 'Something went wrong, login is not created.' }
 
                         // previously user
                         const accountResponse = {
-                            userId: result00.recordset[0].userId,
+                            userID: result00.recordset[0].userID,
                             userName: result00.recordset[0].userName,
                             userRole: {
                                 roleID: result00.recordset[0].roleID,

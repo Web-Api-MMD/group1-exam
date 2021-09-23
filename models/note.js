@@ -16,7 +16,6 @@ class Note {
         this.noteContent = noteObj.noteContent;
         // if (noteObj.authors) this.authors = _.cloneDeep(noteObj.authors);
     }
-
     copy(noteObj) {
         if (noteObj.noteID) this.noteID = noteObj.noteID;
         if (noteObj.noteName) this.noteName = noteObj.noteName;
@@ -85,15 +84,6 @@ class Note {
                     const notes = [];   // this is NOT validated yet
                     let lastNoteIndex = -1;
                     result.recordset.forEach(record => {
-                        // if (notes[lastNoteIndex] && record.noteid == notes[lastNoteIndex].noteid) {
-                        //     console.log(`Note with id ${record.noteid} already exists.`);
-                        //     // const newUser = {
-                        //     //     userID: record.userID,
-                        //     //     userName: record.userName,
-                        //     //     userEmail: record.userEmail
-                        //     // }
-                        //     // note[lastNoteIndex].accounts.push(newUser);
-                        // } 
                         if (notes.noteid) {
                             console.log(`Note with id ${record.noteID} already exists.`);
                             const newNote = {
@@ -233,17 +223,20 @@ class Note {
 
                     console.log('Resultat af notes: ' + JSON.stringify(notesByUserID));
 
-                    if (notesByUserID.length == 0) throw { statusCode: 404, errorMessage: `Note not found with provided noteid: ${noteid}` }
-                    if (notesByUserID.length > 1) throw { statusCode: 500, errorMessage: `Multiple hits of unique data. Corrupt database, noteid: ${noteid}` }
+                    if (notesByUserID.length == 0) throw { statusCode: 404, errorMessage: `User not found with provided userID: ${userid}` }
+                    // if (notesByUserID.length > 1) throw { statusCode: 500, errorMessage: `Multiple hits of unique data. Corrupt database, userID: ${userid}` }
 
                     const { error } = Note.validate(notesByUserID);
-                    if (error) throw { statusCode: 500, errorMessage: `Corrupt Note informaion in database, noteid: ${noteid}` }
+                    // if (error) throw { statusCode: 500, errorMessage: `Corrupt Note informaion in database, userID: ${userid}` }
 
-                    resolve(new Note(notesByUserID));
-                    // resolve(notesByUserID);
+                    // resolve(new Note(notesByUserID));
+                    resolve(notesByUserID);
+                    // console.log('userid efter resolve');
+
 
                 } catch (error) {
-                    console.log('test userid log error');
+                    // console.log('test userid log error');
+                    console.log(error);
 
                     reject(error);
                 }
