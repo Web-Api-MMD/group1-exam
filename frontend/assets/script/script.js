@@ -8,45 +8,45 @@ const outputDiv = document.querySelector('#outputDiv');
 const APIaddress = 'http://localhost:2090';
 
 // log in
-// loginBtn.addEventListener('click', (e) => {
-//     if(userEmail.value && userPassword.value) {
-//         const payload = {
-//             userEmail: userEmail.value,
-//             userPassword: userPassword.value
-//         }
+loginBtn.addEventListener('click', (e) => {
+    if(userEmail.value && userPassword.value) {
+        const payload = {
+            userEmail: userEmail.value,
+            userPassword: userPassword.value
+        }
 
-//         const fetchOptions = {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             },
-//             body: JSON.stringify(payload)
-//         }
+        const fetchOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        }
 
-//         fetch(APIaddress + '/api/accounts/login', fetchOptions)
-//         .then(response => {
-//             const token = response.headers.get('x-authenticate-token');
-//             localStorage.setItem('x-authenticate-token', token); 
-//             console.log(token);
+        fetch(APIaddress + '/api/accounts/login', fetchOptions)
+        .then(response => {
+            const token = response.headers.get('cn-authenticate-token');
+            localStorage.setItem('cn-authenticate-token', token); 
+            console.log(token);
 
-//             return response.json();
-//         })
-//         .then(data => {
-//             console.log(data);
-//             localStorage.setItem('accountInfo', JSON.stringify(data));
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+            localStorage.setItem('accountInfo', JSON.stringify(data));
 
-//             loginDiv.classList.toggle('hidden');
-//             logoutDiv.classList.toggle('hidden');
-//         })
-//         .catch(error => {
-//             alert('There was an error. Wrong username or password.');
-//         })
+            //  --- sendes til anden side når logget ind 
+            window.location.href = "./discoverIntro.html"
+        })
+        .catch(error => {
+            alert('There was an error. Wrong username or password.');
+        })
 
-//     } else {
-//         alert('Please enter user email and password');
-//     }
+    } else {
+        alert('Please enter user email and password');
+    }
 
-// });
+});
 
 // // log out
 // logoutBtn.addEventListener('click', (e) => {
