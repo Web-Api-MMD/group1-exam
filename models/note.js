@@ -7,7 +7,7 @@ const Joi = require('joi');
 
 const _ = require('lodash');
 
-const Author = require('./author');
+const Category = require('./category');
 
 class Note {
     constructor(noteObj) {

@@ -3,9 +3,21 @@ const router = express.Router();
 
 const Categories = require('../models/category');
 
-// get all categories
+router.get('/', async (req, res) => {
+    // need to call the Book class for DB access...
+    try {
+        const allCategories = await Categories.readAll();
+        return res.send(JSON.stringify(allCategories));
+    } catch (err) {
+        return res.status(err.statusCode).send(JSON.stringify(err));
+    }
+});
+
+
+// get category by id
 router.get('/:categoryID', async (req, res) => {
     // need to call the Book class for DB access...
+    console.log('hej');
     let categoryid;
     console.log(req.params.categoryID);
     // let userid;
@@ -22,17 +34,21 @@ router.get('/:categoryID', async (req, res) => {
     // }
 
     try {
-        if (req) {
+        if (req.params.categoryID) {
             const categoryById = await Categories.readById(categoryid);
             return res.send(JSON.stringify(categoryById));
         } 
         else {
-            const allCategories = await Categories.readById();
+            const allCategories = await Categories.readAll();
             return res.send(JSON.stringify(allCategories));
         }
     } catch (err) {
-        console.log(err);
-        return res.status(500).send(JSON.stringify({ errorMessage: err + ' catch fra route handler' }));
+
+        console.log(JSON.stringify(err) + ' log af status code');
+
+        // return res.status(err.statusCode).send(JSON.stringify({ errorMessage: err.statusCode + ' catch fra route handler' }));
+        return res.status(err.statusCode).send(JSON.stringify(err));
+        // return res.status(500).send(JSON.stringify({ errorMessage: err + ' catch fra route handler' }));
     }
 });
 
