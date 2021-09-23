@@ -4,6 +4,8 @@ const loginBtn = document.querySelector('#loginButton');
 const logoutBtn = document.querySelector('#logoutButton');
 const publicArticle = document.querySelector('#publicArticle');
 
+const cnToken = 'cn-authenticate-token';
+// Kunne godt give mening at se om vi kunne gøre 'cn-authenticate-token' til en variabel/const
 
 const APIaddress = 'http://localhost:2090';
 
@@ -25,8 +27,8 @@ loginBtn.addEventListener('click', (e) => {
 
         fetch(APIaddress + '/api/accounts/login', fetchOptions)
         .then(response => {
-            const token = response.headers.get('x-authenticate-token');
-            localStorage.setItem('x-authenticate-token', token); 
+            const token = response.headers.get('cn-authenticate-token');
+            localStorage.setItem('cn-authenticate-token', token); 
             console.log(token);
 
             return response.json();
@@ -50,7 +52,7 @@ loginBtn.addEventListener('click', (e) => {
 
 // log out
 logoutBtn.addEventListener('click', (e) => {
-    window.localStorage.removeItem('x-authenticate-token');
+    window.localStorage.removeItem(cnToken); // 'cn-authenticate-token' erstattet med cnToken
     window.localStorage.removeItem('accountInfo');
 
     console.log('Account logged out yo');
@@ -61,7 +63,7 @@ logoutBtn.addEventListener('click', (e) => {
 
 // on page load
 window.addEventListener('load', (e) => {
-    const token = localStorage.getItem('x-authenticate-token');
+    const token = localStorage.getItem(cnToken); // 'cn-authenticate-token' erstattet med const cnToken
 
     const fetchOptions = {
         headers: {
@@ -69,7 +71,7 @@ window.addEventListener('load', (e) => {
             
         }
     }
-    if(token) fetchOptions.headers['x-authenticate-token'] = token;
+    if(token) fetchOptions.headers['cn-authenticate-token'] = token;
     console.log(fetchOptions.headers);
 
     // part to render public article
