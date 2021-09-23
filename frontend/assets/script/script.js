@@ -5,37 +5,44 @@ const logoutBtn = document.querySelector('#logoutButton');
 const signupBtn = document.querySelector('#signupButton');
 const addNote = document.querySelector('#submitButton');
 const outputDiv = document.querySelector('#outputDiv');
+const noAccess = document.querySelector('#noAccess');
+
 
 
 const APIaddress = 'http://localhost:2090';
 
 //sign up 
-signupBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    const user = {
-        userName: userName.value,
-        userEmail: userEmail.value,
-        passwordValue: passwordValue.value
-    }
+if (signupBtn) {
+    signupBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const user = {
+            userName: userName.value,
+            userEmail: userEmail.value,
+            userPassword: userPassword.value
+        }
 
-    const fetchOptions = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(user)
-    }
+        const fetchOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(user)
+        }
+        console.log(user)
 
-    fetch(APIaddress, fetchOptions)
-        .then(response => response.json())
-        .then(data => {
-            // this is obviously here for the current VERY simple frontend interface...
-            console.log(data)
-        })
-        .catch(error => {
-            alert('Something went wrong, try again')
-        })
-});
+        fetch(APIaddress + '/api/accounts/', fetchOptions)
+            .then(response => response.json())
+            .then(data => {
+                // this is obviously here for the current VERY simple frontend interface...
+                console.log(data)
+                alert(`User created as ${data.userName} with role: ${data.userRole.roleName}`);
+
+            })
+            .catch(error => {
+                alert('Something went wrong, try again')
+            })
+    });
+};
 
 
 // log in
@@ -108,13 +115,13 @@ window.addEventListener('load', (e) => {
         }
     }
     if (token) fetchOptions.headers['cn-authenticate-token'] = token;
-    console.log(fetchOptions.headers);
+    // console.log(fetchOptions.headers);
 
     // part to render notes
-    if (outputDiv) {
+    if (outputDiv && token) {
         console.log(token);
         fetchOptions.method = 'GET';
-        fetch(APIaddress + '/api/notes', fetchOptions)
+        fetch(APIaddress + '/api/notes/', fetchOptions)
             .then(response => {
                 return response.json()
             })
@@ -137,6 +144,7 @@ window.addEventListener('load', (e) => {
                     `;
 
                     outputDiv.innerHTML += htmlOutput;
+                    noAccess.classList.add("hidden");
                 }
 
             })
@@ -144,34 +152,35 @@ window.addEventListener('load', (e) => {
                 console.log(error);
             });
     }
-
-
 });
 
 // add note to database
-addNote.addEventListener('click', (e) => {
-    e.preventDefault();
-    const newNote = {
-        noteName: noteName.value,
-        noteContent: noteContent.value,
-    }
+if (addNote) {
+    addNote.addEventListener('click', (e) => {
+        e.preventDefault();
+        const newNote = {
+            noteName: noteName.value,
+            noteContent: noteContent.value,
+        }
 
-    const fetchOptions = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(newNote)
-    }
+        const fetchOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newNote)
+        }
 
-    fetch(APIaddress, fetchOptions)
-        .then(response => response.json())
-        .then(data => {
-            // this is obviously here for the current VERY simple frontend interface...
-            console.log(data)
-        })
-        .catch(error => {
-            alert('Something went wrong, try again')
-        })
-});
+        fetch(APIaddress, fetchOptions)
+            .then(response => response.json())
+            .then(data => {
+                // this is obviously here for the current VERY simple frontend interface...
+                console.log(data)
+            })
+            .catch(error => {
+                alert('Something went wrong, try again')
+            })
+    });
+}
+
 
