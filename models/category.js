@@ -8,80 +8,71 @@ const Joi = require('joi');
 const _ = require('lodash');
 
 class Category {
-//     constructor(authorObj) {
-//         this.authorid = authorObj.authorid;
-//         this.firstname = authorObj.firstname;
-//         this.lastname = authorObj.lastname;
-//         this.biolink = authorObj.biolink;
-//     }
+    constructor(categoryObj) {
+        this.categoryID = categoryObj.categoryID;
+        this.categoryName = categoryObj.categoryName;
+    }
 
-//     static validate(authorObj) {
-//         const schema = Joi.object({
-//             authorid: Joi.number()
-//                 .integer()
-//                 .min(1),
-//             firstname: Joi.string()
-//                 .max(50),
-//             lastname: Joi.string()
-//                 .min(1)
-//                 .max(50),
-//             biolink: Joi.string()
-//                 .uri()
-//                 .max(255)
-//         });
+    static validate(categoryObj) {
+        const schema = Joi.object({
+            categoryID: Joi.number()
+                .integer()
+                .min(1),
+            categoryName: Joi.string()
+                .min(1)
+                .max(50)
+        });
 
-//         return schema.validate(authorObj);
-//     }
+        return schema.validate(categoryObj);
+    }
 
-//     static readById(authorid) {
-//         return new Promise((resolve, reject) => {
-//             (async () => {
-//                 // connect to DB
-//                 // query DB
-//                 // transform the result into the object structure of Author
-//                 // validate
-//                 // resolve (author)
-//                 // reject (error)
-//                 // CLOSE DB connection
+    static readById(categoryID) {
+        return new Promise((resolve, reject) => {
+            (async () => {
+                // connect to DB
+                // query DB
+                // transform the result into the object structure of Category
+                // validate
+                // resolve (category)
+                // reject (error)
+                // CLOSE DB connection
 
-//                 try {
-//                     const pool = await sql.connect(con);
-//                     const result = await pool.request()
-//                         .input('authorid', sql.Int(), authorid)
-//                         .query(`
-//                             SELECT *
-//                             FROM liloAuthor a
-//                             WHERE a.authorid = @authorid
-//                         `)
+                try {
+                    const pool = await sql.connect(con);
+                    const result = await pool.request()
+                        .input('categoryID', sql.Int(), categoryID)
+                        .query(`
+                            SELECT *
+                            FROM cnCategory c
+                            WHERE c.categoryID = @categoryID
+                        `)
 
-//                     const authors = [];
-//                     result.recordset.forEach(record => {
-//                         const author = {
-//                             authorid: record.authorid,
-//                             firstname: record.firstname,
-//                             lastname: record.lastname,
-//                             biolink: record.biolink
-//                         }
+                    const categories = [];
+                    result.recordset.forEach(record => {
+                        const category = {
+                            categoryID: record.categoryID,
+                            categoryName: record.categoryName,
+                        }
 
-//                         authors.push(author);
-//                     });
+                        categories.push(category);
+                    });
 
-//                     if (authors.length == 0) throw { statusCode: 404, errorMessage: `Author not found with provided authorid: ${authorid}` }
-//                     if (authors.length > 1) throw { statusCode: 500, errorMessage: `Multiple hits of unique data. Corrupt database, authorid: ${authorid}` }
+                    if (categories.length == 0) throw { statusCode: 404, errorMessage: `Category not found with provided categoryID: ${categoryID}` }
+                    if (categories.length > 1) throw { statusCode: 500, errorMessage: `Multiple hits of unique data. Corrupt database, categoryID: ${categoryID}` }
 
-//                     const { error } = Author.validate(authors[0]);
-//                     if (error) throw { statusCode: 500, errorMessage: `Corrupt Author informaion in database, authorid: ${authorid}` }
+                    const { error } = Category.validate(categories[0]);
+                    if (error) throw { statusCode: 500, errorMessage: `Corrupt Category informaion in database, categoryID: ${categoryID}` }
 
-//                     resolve(new Author(authors[0]));
+                    resolve(new Category(categories[0]));
 
-//                 } catch (error) {
-//                     reject(error);
-//                 }
+                } catch (error) {
+                    reject(error);
+                }
 
-//                 sql.close();
-//             })();
-//         });
-//     }
+                sql.close();
+            })();
+        });
+    }
 }
 
 module.exports = Category;
