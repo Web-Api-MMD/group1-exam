@@ -8,7 +8,9 @@ router.get('/', async (req, res) => {
     // need to call the Book class for DB access...
     let noteid;
     // let userid;
-    console.log(req.query.noteID);
+    console.log(JSON.stringify(req.body) + ' fra handler');
+    console.log(JSON.stringify(req.query) + ' query fra handler');
+
     if (req.query.noteID) {
         noteid = parseInt(req.query.noteID);
         console.log(noteid + ' noteid fra route handler');
@@ -30,6 +32,7 @@ router.get('/', async (req, res) => {
             return res.send(JSON.stringify(allNotes));
         }
     } catch (err) {
+        console.log(err + ' error');
         return res.status(500).send(JSON.stringify({ errorMessage: err + ' catch fra route handler' }));
     }
 });
