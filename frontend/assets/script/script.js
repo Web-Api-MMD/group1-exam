@@ -33,9 +33,10 @@ if (signupBtn) {
         fetch(APIaddress + '/api/accounts/', fetchOptions)
             .then(response => response.json())
             .then(data => {
-                // this is obviously here for the current VERY simple frontend interface...
-                console.log(data)
+                // console.log(data)
                 alert(`User created as ${data.userName} with role: ${data.userRole.roleName}`);
+
+                // redirect to login page
 
             })
             .catch(error => {
@@ -104,7 +105,7 @@ if (logoutBtn) {
     });
 }
 
-// on page load
+// on page load for notes
 window.addEventListener('load', (e) => {
     const token = localStorage.getItem('cn-authenticate-token');
 
@@ -129,7 +130,7 @@ window.addEventListener('load', (e) => {
                 for (let i = 0; i < data.length; i++) {
                     let htmlOutput = `
                     <section class="category">
-                        <h3>Notes on CSS</h3>
+                        <h3>Notes on </h3>
                         <a href="./discoverCategory.html">See more</a>
                     </section>
                     <article class="description">
