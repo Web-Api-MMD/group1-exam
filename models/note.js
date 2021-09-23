@@ -285,7 +285,7 @@ class Note {
         });
     }
 
-    create() {
+  create() {
         return new Promise((resolve, reject) => {
             (async () => {
                 // › › check if authors exist in DB (i.e. Author.readById(authorid))
@@ -368,7 +368,7 @@ class Note {
 
             })();
         });
-    }
+    }  
 
     static delete(noteid) {
         return new Promise((resolve, reject) => {

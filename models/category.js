@@ -5,8 +5,6 @@ const con = config.get('dbConfig_UCN');
 
 const Joi = require('joi');
 
-const _ = require('lodash');
-
 class Category {
     constructor(categoryObj) {
         this.categoryID = categoryObj.categoryID;
@@ -111,6 +109,7 @@ class Category {
             })();
         });
     }
+
 }
 
 module.exports = Category;
