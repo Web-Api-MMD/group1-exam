@@ -14,12 +14,14 @@ class Note {
         this.noteID = noteObj.noteID;
         this.noteName = noteObj.noteName;
         this.noteContent = noteObj.noteContent;
+        this.noteCategory = noteObj.noteCategory;
         // if (noteObj.authors) this.authors = _.cloneDeep(noteObj.authors);
     }
     copy(noteObj) {
         if (noteObj.noteID) this.noteID = noteObj.noteID;
         if (noteObj.noteName) this.noteName = noteObj.noteName;
         if (noteObj.noteContent) this.noteContent = noteObj.noteContent;
+        if (noteObj.noteCategory) this.noteCategory = noteObj.noteCategory;
         // if (noteObj.authors) this.authors = _.cloneDeep(noteObj.authors);
     }
 
@@ -34,6 +36,16 @@ class Note {
                 // .required(),
             noteContent: Joi.string()
                 .min(1),
+            noteCategory: Joi.object({
+                    categoryID: Joi.number()
+                    .integer()
+                    .min(1)
+                    .required(),
+                    categoryName: Joi.string()
+                    .min(1)
+                    .max(50)
+                    }
+            )
             // userID: Joi.number()
             //     .integer()
         });
@@ -62,24 +74,41 @@ class Note {
                     const pool = await sql.connect(con);
                     let result;
                     if (noteid) {
+                        console.log('test 2');
                         result = await pool.request()
                             .input('noteID', sql.Int(), noteid)
+                            // OLD QUERY
+                            // .query(`
+                            // SELECT n.noteID, n.noteName, n.noteContent, n.FK_userID 
+                            // FROM cnNote n
+                            // WHERE n.noteID = @noteID
+                            // ORDER BY n.noteID, n.FK_userID
+                            // `);
+                            // OLD QUERY
+
+                            // TEST QUERY
                             .query(`
-                            SELECT n.noteID, n.noteName, n.noteContent, n.FK_userID 
+                            SELECT n.noteID, n.noteName, n.noteContent, n.FK_categoryID, c.categoryName
                             FROM cnNote n
+                            JOIN cnCategory c ON c.categoryID = n.FK_categoryID
                             WHERE n.noteID = @noteID
-                            ORDER BY n.noteID, n.FK_userID
-                        `);
+                            `);
                     } else {
                         console.log('test 3');
                         result = await pool.request()
-                            .query(`
-                            SELECT * 
-                            FROM cnNote n
+                        //     .query(`
+                        //     SELECT * 
+                        //     FROM cnNote n
+                        // `);
+                        .query(`
+                        SELECT n.noteID, n.noteName, n.noteContent, n.FK_categoryID, c.categoryName
+                        FROM cnNote n
+                        JOIN cnCategory c ON c.categoryID = n.FK_categoryID
                         `);
+
                     }
                     // console.log(JSON.stringify(result.recordset) + ' log af result recordset');
-                    
+                    // console.log('Result ny: ' + result);
                     
                     const notes = [];   // this is NOT validated yet
                     let lastNoteIndex = -1;
@@ -90,16 +119,24 @@ class Note {
                                 noteID: record.noteID,
                                 noteName: record.noteName,
                                 noteContent: record.noteContent,
+                                noteCategory: {
+                                    categoryID: record.FK_categoryID,
+                                    categoryName: record.categoryName
+                                }
                             }
                             notesByUserID.push(newNote);
                             lastNoteIndex++;
                         } else {
                             console.log(`Note with id ${record.noteID} is a new note.`);
-                            console.log(record);
+                            console.log(JSON.stringify(record) + ' = record');
                             const newNote = {
                                 noteID: record.noteID,
                                 noteName: record.noteName,
                                 noteContent: record.noteContent,
+                                noteCategory: {
+                                    categoryID: record.FK_categoryID,
+                                    categoryName: record.categoryName
+                                }
                             }
                             notes.push(newNote);
                             lastNoteIndex++;
@@ -111,7 +148,6 @@ class Note {
                     notes.forEach(note => {
                         const { error } = Note.validate(note);
                         if (error) throw { errorMessage: `Note.validate failed.` };
-
                         validNotes.push(new Note(note));
                     });
                     // console.log(validNotes + ' valid notes');
@@ -137,12 +173,11 @@ class Note {
                 try {
                     const pool = await sql.connect(con);
                     const result = await pool.request()
-                        .input('noteID', sql.Int(), noteid)
+                        // .input('noteID', sql.Int(), noteid)
                         .query(`
-                            SELECT n.noteID, n.noteName, n.noteContent, n.FK_userID 
-                            FROM cnNote n
-                            WHERE n.noteID = @noteID
-                            ORDER BY n.noteID, n.FK_userID
+                        SELECT n.noteID, n.noteName, n.noteContent, n.FK_categoryID, c.categoryName
+                        FROM cnNote n
+                        JOIN cnCategory c ON c.categoryID = n.FK_categoryID
                     `)
 
                     const notes = [];   // this is NOT validated yet
@@ -153,6 +188,10 @@ class Note {
                                 noteID: record.noteID,
                                 noteName: record.noteName,
                                 noteContent: record.noteContent,
+                                noteCategory: {
+                                    categoryID: record.FK_categoryID,
+                                    categoryName: record.categoryName
+                                }
                             }
                             notes.push(newNote);
                             lastNoteIndex++;

@@ -38,7 +38,7 @@ class Category {
                         SELECT * 
                         FROM cnCategory
                     `);
-
+                    // console.log(result.recordset);
                     const validCategories = [];
 
                     result.recordset.forEach(category => {
@@ -72,9 +72,16 @@ class Category {
                     const pool = await sql.connect(con);
                     const result = await pool.request()
                         .input('categoryID', sql.Int(), categoryID)
+                        // OLD QUERY
+                        // .query(`
+                        //     SELECT *
+                        //     FROM cnCategory c
+                        //     WHERE c.categoryID = @categoryID
+                        // `)
                         .query(`
                             SELECT *
                             FROM cnCategory c
+                            JOIN cnNote n ON c.categoryID = n.FK_categoryID
                             WHERE c.categoryID = @categoryID
                         `)
 
