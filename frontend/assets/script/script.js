@@ -40,7 +40,7 @@ if(loginBtn) {
                 window.location.href = "./discoverIntro.html";
             })
             .catch(error => {
-                alert('There was an error. Wrong username or password.');
+                alert('Wrong username or password. Please try again');
             })
     
         } else {
