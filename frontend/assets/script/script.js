@@ -6,6 +6,7 @@ const signupBtn = document.querySelector('#signupButton');
 const addNote = document.querySelector('#submitButton');
 const outputDiv = document.querySelector('#outputDiv');
 const noAccess = document.querySelector('#noAccess');
+const categorySelect = document.querySelector('#categories');
 
 
 
@@ -44,7 +45,6 @@ if (signupBtn) {
             })
     });
 };
-
 
 // log in
 if (loginBtn) {
@@ -130,7 +130,7 @@ window.addEventListener('load', (e) => {
                 for (let i = 0; i < data.length; i++) {
                     let htmlOutput = `
                     <section class="category">
-                        <h3>Notes on </h3>
+                        <h3>Notes on ${data[i].noteCategory.categoryName}</h3>
                         <a href="./discoverCategory.html">See more</a>
                     </section>
                     <article class="description">
@@ -157,6 +157,37 @@ window.addEventListener('load', (e) => {
 
 // add note to database
 if (addNote) {
+    const token = localStorage.getItem('cn-authenticate-token');
+
+    const fetchOptions = {
+        headers: {
+            'Content-Type': 'application/json',
+
+        }
+    }
+    if (token) fetchOptions.headers['cn-authenticate-token'] = token;
+
+    if (token) {
+        console.log(token);
+        fetchOptions.method = 'GET';
+        fetch(APIaddress + '/api/categories/', fetchOptions)
+            .then(response => {
+                return response.json()
+            })
+            .then(data => {
+                for (let i = 0; i < data.length; i++) {
+                    let htmlOutput = `
+                        <option value="${data[i].categoryName}">${data[i].categoryName}</option>
+                    `;
+
+                    categorySelect.innerHTML += htmlOutput;
+                }
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
+
     addNote.addEventListener('click', (e) => {
         e.preventDefault();
         const newNote = {
@@ -183,5 +214,3 @@ if (addNote) {
             })
     });
 }
-
-

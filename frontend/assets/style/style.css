@@ -17,7 +17,7 @@ a {
     font-weight: 600;
     font-size: 20px;
 }
-p {
+p, label{
     line-height: 40px;
     font-family: 'Source Sans Pro', sans-serif;
     font-weight: 400;
@@ -136,7 +136,7 @@ h2 {
     border-radius: 5px;
 }
 
-.logInSignUp input, .addNote input, .addNote textarea {
+.logInSignUp input, .addNote input, .addNote textarea, .addNote select {
     margin-bottom: 2rem;
     border-radius: 5px;
     padding: 1rem;
