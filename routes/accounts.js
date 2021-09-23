@@ -1,14 +1,8 @@
-// *** previously logins.js --> accounts.js
-// now serving endpoints:
-//      POST    /api/accounts/login
-//      POST    /api/accounts
-
 const express = require('express');
 const router = express.Router();
 
-// previously Login from ../models/login
 const Account = require('../models/account');
-// const Note = require('../models/note');
+
 const jwt = require('jsonwebtoken');
 const config = require('config');
 
@@ -18,7 +12,7 @@ const secret = config.get('jwt_secret_key');
 // previously '/'
 router.post('/login', async (req, res) => {
     // res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Access-Control-Expose-Headers', 'x-authenticate-token');
+    res.setHeader('Access-Control-Expose-Headers', 'cn-authenticate-token');
     try {
         // previously Login.validate(req.body)
         const { error } = Account.validate(req.body);
@@ -30,9 +24,11 @@ router.post('/login', async (req, res) => {
         const account = await Account.checkCredentials(accountObj);
 
         const token = await jwt.sign(account, secret);
-        res.setHeader('x-authenticate-token', token);
+        res.setHeader('cn-authenticate-token', token);
         // previously user
+        console.log('fra route handler - login');
         return res.send(JSON.stringify(account));
+
 
     } catch (err) {
         console.log(err);
@@ -45,7 +41,7 @@ router.post('/login', async (req, res) => {
 
 // previously '/signup'
 router.post('/', async (req, res) => {
-    res.setHeader('Content-Type', 'application/json');
+    // res.setHeader('Content-Type', 'application/json');
     try {
         // previously Login.validate(req.body)
         const { error } = Account.validate(req.body);

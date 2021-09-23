@@ -86,7 +86,7 @@ class Account {
                                 ON u.FK_roleID = r.roleID
                             WHERE u.userEmail = @userEmail
                         `);
-                    console.log(result);
+                    console.log(result + ' log af result inde i chech credentials');
                     console.log('Inde i check credentials');
 
                     if (!result.recordset[0]) throw { statusCode: 404, errorMessage: 'User not found with provided credentials.' }
