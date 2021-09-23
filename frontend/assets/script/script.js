@@ -2,7 +2,7 @@ const userEmail = document.querySelector('#userEmail');
 const userPassword = document.querySelector('#userPassword');
 const loginBtn = document.querySelector('#loginButton');
 const logoutBtn = document.querySelector('#logoutButton');
-const output = document.querySelector('#output');
+const outputDiv = document.querySelector('#outputDiv');
 
 
 const APIaddress = 'http://localhost:2090';
@@ -61,7 +61,7 @@ const APIaddress = 'http://localhost:2090';
 
 // on page load
 window.addEventListener('load', (e) => {
-    const token = localStorage.getItem('x-authenticate-token');
+    const token = localStorage.getItem('cn-authenticate-token');
 
     const fetchOptions = {
         headers: {
@@ -69,7 +69,7 @@ window.addEventListener('load', (e) => {
 
         }
     }
-    if (token) fetchOptions.headers['x-authenticate-token'] = token;
+    if (token) fetchOptions.headers['cn-authenticate-token'] = token;
     console.log(fetchOptions.headers);
 
     // part to render notes
@@ -96,7 +96,7 @@ window.addEventListener('load', (e) => {
                 </div>
                 `;
 
-                output.innerHTML += htmlOutput;
+                outputDiv.innerHTML += htmlOutput;
             }
 
         })

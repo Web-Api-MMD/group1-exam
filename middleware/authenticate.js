@@ -4,7 +4,7 @@ const config = require('config');
 const secret = config.get('jwt_secret_key');
 
 module.exports = async (req, res, next) => {
-    const token = req.header('x-authenticate-token');
+    const token = req.header('cn-authenticate-token');
     if (!token) return res.status(401).send(JSON.stringify({errorMessage: 'Access denied: no token provided.'}));
 
     // if (token == 'OK') next();
