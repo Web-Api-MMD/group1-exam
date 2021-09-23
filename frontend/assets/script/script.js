@@ -2,20 +2,51 @@ const userEmail = document.querySelector('#userEmail');
 const userPassword = document.querySelector('#userPassword');
 const loginBtn = document.querySelector('#loginButton');
 const logoutBtn = document.querySelector('#logoutButton');
+const signupBtn = document.querySelector('#signupButton');
+const addNote = document.querySelector('#submitButton');
 const outputDiv = document.querySelector('#outputDiv');
 
 
 const APIaddress = 'http://localhost:2090';
 
+//sign up 
+signupBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    const user = {
+        userName: userName.value,
+        userEmail: userEmail.value,
+        passwordValue: passwordValue.value
+    }
+
+    const fetchOptions = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(user)
+    }
+
+    fetch(APIaddress, fetchOptions)
+        .then(response => response.json())
+        .then(data => {
+            // this is obviously here for the current VERY simple frontend interface...
+            console.log(data)
+        })
+        .catch(error => {
+            alert('Something went wrong, try again')
+        })
+});
+
+
 // log in
-if(loginBtn) {
+if (loginBtn) {
     loginBtn.addEventListener('click', (e) => {
-        if(userEmail.value && userPassword.value) {
+        if (userEmail.value && userPassword.value) {
             const payload = {
                 userEmail: userEmail.value,
                 userPassword: userPassword.value
             }
-    
+
             const fetchOptions = {
                 method: 'POST',
                 headers: {
@@ -23,30 +54,30 @@ if(loginBtn) {
                 },
                 body: JSON.stringify(payload)
             }
-    
+
             fetch(APIaddress + '/api/accounts/login', fetchOptions)
-            .then(response => {
-                const token = response.headers.get('cn-authenticate-token');
-                localStorage.setItem('cn-authenticate-token', token); 
-                console.log(token);
-    
-                return response.json();
-            })
-            .then(data => {
-                console.log(data);
-                localStorage.setItem('accountInfo', JSON.stringify(data));
-    
-                //  --- sendes til anden side når logget ind 
-                window.location.href = "./discoverIntro.html";
-            })
-            .catch(error => {
-                alert('Wrong username or password. Please try again');
-            })
-    
+                .then(response => {
+                    const token = response.headers.get('cn-authenticate-token');
+                    localStorage.setItem('cn-authenticate-token', token);
+                    console.log(token);
+
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data);
+                    localStorage.setItem('accountInfo', JSON.stringify(data));
+
+                    //  --- sendes til anden side når logget ind 
+                    window.location.href = "./discoverIntro.html";
+                })
+                .catch(error => {
+                    alert('Wrong username or password. Please try again');
+                })
+
         } else {
             alert('Please enter user email and password');
         }
-    
+
     });
 }
 
@@ -56,11 +87,11 @@ if (logoutBtn) {
         e.preventDefault(); // no refresh - else no redirect
         window.localStorage.removeItem('cn-authenticate-token');
         window.localStorage.removeItem('accountInfo');
-    
+
         console.log('Account logged out yo');
         window.location.href = "/frontend/index.html";
 
-    
+
         // loginDiv.classList.toggle('hidden');
         // logoutDiv.classList.toggle('hidden');
     });
@@ -104,10 +135,10 @@ window.addEventListener('load', (e) => {
                     </article>
                     </div>
                     `;
-    
+
                     outputDiv.innerHTML += htmlOutput;
                 }
-    
+
             })
             .catch(error => {
                 console.log(error);
@@ -116,3 +147,31 @@ window.addEventListener('load', (e) => {
 
 
 });
+
+// add note to database
+addNote.addEventListener('click', (e) => {
+    e.preventDefault();
+    const newNote = {
+        noteName: noteName.value,
+        noteContent: noteContent.value,
+    }
+
+    const fetchOptions = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newNote)
+    }
+
+    fetch(APIaddress, fetchOptions)
+        .then(response => response.json())
+        .then(data => {
+            // this is obviously here for the current VERY simple frontend interface...
+            console.log(data)
+        })
+        .catch(error => {
+            alert('Something went wrong, try again')
+        })
+});
+
