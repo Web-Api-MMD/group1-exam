@@ -10,8 +10,16 @@ const categorySelect = document.querySelector('#categories');
 const ownNotes = document.querySelector('#ownNotes');
 const loggedInNav = document.querySelector('#navLoggedIn');
 const loggedOutNav = document.querySelector('#navLoggedOut');
+const noteName = document.querySelector('#noteName');
+const noteContent = document.querySelector('#newNoteContent');
+
+console.log(categorySelect);
+console.log(noteContent);
+
 
 const APIaddress = 'http://localhost:2090';
+
+const token = localStorage.getItem('cn-authenticate-token');
 
 
 //nav based on log in or not
@@ -140,9 +148,9 @@ window.addEventListener('load', (e) => {
                 return response.json()
             })
             .then(data => {
-                console.log(data);
+                // console.log(data);
 
-                for (let i = 0; i < data.length; i++) {
+                for (let i = 0; i < 11; i++) { // i < data.length
                     let htmlOutput = `
                     <section class="category">
                         <h3>Notes on ${data[i].noteCategory.categoryName}</h3>
@@ -179,7 +187,7 @@ window.addEventListener('load', (e) => {
         headers: {
             'Content-Type': 'application/json',
 
-        }
+        },
     }
     if (token) fetchOptions.headers['cn-authenticate-token'] = token;
 
@@ -220,7 +228,6 @@ if (addNote) {
     const fetchOptions = {
         headers: {
             'Content-Type': 'application/json',
-
         }
     }
     if (token) fetchOptions.headers['cn-authenticate-token'] = token;
@@ -230,12 +237,14 @@ if (addNote) {
         fetchOptions.method = 'GET';
         fetch(APIaddress + '/api/categories/', fetchOptions)
             .then(response => {
-                return response.json()
+                return response.json();
             })
             .then(data => {
+                console.log(data[0].categoryID);
+                console.log(data[0].categoryName);
                 for (let i = 0; i < data.length; i++) {
                     let htmlOutput = `
-                        <option value="${data[i].categoryName}">${data[i].categoryName}</option>
+                        <option value="${data[i].categoryID}">${data[i].categoryName}</option>
                     `;
 
                     categorySelect.innerHTML += htmlOutput;
@@ -252,8 +261,9 @@ if (addNote) {
             noteName: noteName.value,
             noteContent: noteContent.value,
             noteCategory: {
-                categoryName: categorySelect.value
-            }
+                categoryID: categorySelect.value
+            },
+            noteAuthor: 5
         }
 
         const fetchOptions = {
@@ -262,15 +272,20 @@ if (addNote) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(newNote)
+            // body: newNote
         }
+        console.log(JSON.stringify(newNote));
+        console.log(APIaddress);
 
-        fetch(APIaddress, fetchOptions)
+        fetch(APIaddress + '/api/notes/', fetchOptions)
             .then(response => response.json())
             .then(data => {
                 // this is obviously here for the current VERY simple frontend interface...
-                console.log(data)
+                console.log(data);
             })
             .catch(error => {
+                console.log(error);
+                console.log(JSON.stringify(error));
                 alert('Something went wrong, try again')
             })
     });

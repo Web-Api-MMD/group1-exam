@@ -2,7 +2,9 @@ const express = require('express');
 const router = express.Router();
 
 const Note = require('../models/note');
+const cors = require('cors');
 
+router.use(cors());
 
 router.get('/', async (req, res) => {
     // need to call the Book class for DB access...
@@ -76,7 +78,7 @@ router.get('/user/:userID', async (req, res) => {
     }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', cors(), async (req, res) => {
     // › › validate req.body (payload) as note --> authors must have authorid!
     // › › instantiate note = new note(req.body)
     // › › call await note.create()
