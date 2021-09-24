@@ -80,15 +80,18 @@ router.post('/', async (req, res) => {
     // › › validate req.body (payload) as note --> authors must have authorid!
     // › › instantiate note = new note(req.body)
     // › › call await note.create()
-
-    const { error } = Note.validate(req.body);
-    if (error) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: note payload formatted incorrectly', errorDetail: error.details[0].message }));
+    console.log(JSON.stringify(req.body) + ' log af req.body');
+    // const { error } = Note.validate(req.body);
+    // if (error) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: note payload formatted incorrectly', errorDetail: error.details[0].message }));
 
     try {
         const newNote = new Note(req.body);
         const note = await newNote.create();
+        console.log(note + ' note fra handler');
         return res.send(JSON.stringify(note));
     } catch (err) {
+        console.log(JSON.stringify(err) + ' error fra post handler');
+        console.log(err + ' error fra post handler');
         return res.status(500).send(JSON.stringify({ errorMessage: err }));
     }
 });
