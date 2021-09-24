@@ -7,10 +7,27 @@ const addNote = document.querySelector('#submitButton');
 const outputDiv = document.querySelector('#outputDiv');
 const noAccess = document.querySelector('#noAccess');
 const categorySelect = document.querySelector('#categories');
+const ownNotes = document.querySelector('#ownNotes');
+const loggedInNav = document.querySelector('#navLoggedIn');
+const loggedOutNav = document.querySelector('#navLoggedOut');
 
 
 
 const APIaddress = 'http://localhost:2090';
+
+
+//nav based on log in or not
+window.addEventListener('load', (e) => {
+    const token = localStorage.getItem('cn-authenticate-token');
+
+    if (token) {
+        console.log('vi har fandeme en token vennerne og den er: ' + token);
+
+        loggedInNav.classList.remove("hidden");
+        loggedOutNav.classList.add("hidden");
+    }
+});
+
 
 //sign up 
 if (signupBtn) {
@@ -67,7 +84,7 @@ if (loginBtn) {
                 .then(response => {
                     const token = response.headers.get('cn-authenticate-token');
                     localStorage.setItem('cn-authenticate-token', token);
-                    console.log(token);
+                    console.log(response);
 
                     return response.json();
                 })
@@ -79,6 +96,7 @@ if (loginBtn) {
                     window.location.href = "./discoverIntro.html";
                 })
                 .catch(error => {
+                    console.log(error);
                     alert('Wrong username or password. Please try again');
                 })
 
@@ -107,7 +125,7 @@ if (logoutBtn) {
 
 // on page load for notes
 window.addEventListener('load', (e) => {
-    const token = localStorage.getItem('cn-authenticate-token');
+    // const token = localStorage.getItem('cn-authenticate-token');
 
     const fetchOptions = {
         headers: {
@@ -124,9 +142,12 @@ window.addEventListener('load', (e) => {
         fetchOptions.method = 'GET';
         fetch(APIaddress + '/api/notes/', fetchOptions)
             .then(response => {
+                // console.log(response);
                 return response.json()
             })
             .then(data => {
+                console.log(data);
+
                 for (let i = 0; i < data.length; i++) {
                     let htmlOutput = `
                     <section class="category">
@@ -137,7 +158,7 @@ window.addEventListener('load', (e) => {
                         <p>Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore </p>
                     </article>
                     <div class="notes">
-                    <article id="noteContent">
+                    <article class="noteContent">
                         <p>${data[i].noteContent}</p>
                         <h4>${data[i].noteName}</h4>
                     </article>
@@ -154,6 +175,49 @@ window.addEventListener('load', (e) => {
             });
     }
 });
+
+
+//render notes by userID
+window.addEventListener('load', (e) => {
+    const token = localStorage.getItem('cn-authenticate-token');
+
+    const fetchOptions = {
+        headers: {
+            'Content-Type': 'application/json',
+
+        }
+    }
+    if (token) fetchOptions.headers['cn-authenticate-token'] = token;
+
+
+    // part to render notes
+    if (ownNotes && token) {
+        console.log(token);
+        fetchOptions.method = 'GET';
+        fetch(APIaddress + '/api/notes/user/', fetchOptions)
+            .then(response => {
+                return response.json()
+            })
+            .then(data => {
+                for (let i = 0; i < data.length; i++) {
+                    let htmlOutput = `
+                    <article class="noteContent">
+                        <p>${data[i].noteContent}</p>
+                        <h4>${data[i].noteName}</h4>
+                    </article>
+                    `;
+
+                    ownNotes.innerHTML += htmlOutput;
+                    noAccess.classList.add("hidden");
+                }
+
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
+});
+
 
 // add note to database
 if (addNote) {
@@ -193,6 +257,9 @@ if (addNote) {
         const newNote = {
             noteName: noteName.value,
             noteContent: noteContent.value,
+            noteCategory: {
+                categoryName: categorySelect.value
+            }
         }
 
         const fetchOptions = {

@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@700&display=swap');
 
 .hidden {
-    display: none;
+    display: none !important; 
 }
 
 body {
@@ -169,7 +169,7 @@ h2 {
     margin-bottom: 6vh;
 }
 
-.discoverNotes {
+.discoverNotes, .myNotes {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -208,7 +208,7 @@ h2 {
     justify-content: space-between;
 }
 
-#noteContent {
+.noteContent {
     border: solid 1px #C4C4C4;
     border-radius: 5px;
 }

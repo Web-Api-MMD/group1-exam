@@ -9,12 +9,23 @@
 
 </head>
 <body>
-    
-    <nav class="menuLoggedIn blue">
-        <a href="./index.html"><h1>CrossNotes</h1></a>
+    <nav class="menu white" id="navLoggedOut">
+        <h1>CrossNotes</h1>
+        <ul>
+            <li> <a href="./logIn.html">Login</a> </li>
+            <li> <a href="./signup.html" class="buttonBasic">Sign Up</a> </li>
+        </ul>
+    </nav>
+
+    <nav class="menuLoggedIn blue hidden" id="navLoggedIn">
+        <a href="./index.html">
+            <h1>CrossNotes</h1>
+        </a>
         <ul>
             <li> <a href="./discoverCategory.html">Notes</a> </li>
             <li> <a href="./addNote.html"> Add note </a> </li>
+            <li> <a href="./ownNotes.html"> My notes </a> </li>
+
             <li> <a href="" class="signOut" id="logoutButton">Sign out</a> </li>
         </ul>
     </nav>
