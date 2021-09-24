@@ -182,7 +182,7 @@ class Note {
                     const result = await pool.request()
                         // .input('noteID', sql.Int(), noteid)
                         .query(`
-                        SELECT n.noteID, n.noteName, n.noteContent, n.FK_categoryID, c.categoryName
+                        SELECT n.noteID, n.noteName, n.noteContent, n.FK_categoryID, FK_userID, c.categoryName
                         FROM cnNote n
                         JOIN cnCategory c ON c.categoryID = n.FK_categoryID
                     `)
@@ -198,7 +198,8 @@ class Note {
                                 noteCategory: {
                                     categoryID: record.FK_categoryID,
                                     categoryName: record.categoryName
-                                }
+                                },
+                                noteAuthor: record.FK_userID
                             }
                             notes.push(newNote);
                             lastNoteIndex++;
@@ -240,8 +241,9 @@ class Note {
                     const result = await pool.request()
                         .input('userID', sql.Int(), userid)
                         .query(`
-                            SELECT n.noteID, n.noteName, n.noteContent, n.FK_userID 
+                            SELECT n.noteID, n.noteName, n.noteContent, n.FK_userID, n.FK_categoryID, c.categoryName
                             FROM cnNote n
+                            JOIN cnCategory c ON c.categoryID = n.FK_categoryID
                             WHERE n.FK_userID = @userID
                             ORDER BY n.noteID, n.FK_userID
                     `);
@@ -261,6 +263,11 @@ class Note {
                                 noteID: record.noteID,
                                 noteName: record.noteName,
                                 noteContent: record.noteContent,
+                                noteCategory: {
+                                    categoryID: record.FK_categoryID,
+                                    categoryName: record.categoryName
+                                },
+                                noteAuthor: record.FK_userID
                             }
                             notesByUserID.push(newNote);
                             lastNoteIndex++;

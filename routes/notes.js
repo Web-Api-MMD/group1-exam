@@ -44,7 +44,7 @@ router.get('/:noteID', async (req, res) => {
     // › › call await note.readById(req.params.noteid)
 
     const { error } = Note.validate(req.params);
-    if (error) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: noteid has to be an integer', errorDetail: error.details[0].message }));
+    if (error) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: noteid has to be an integer. If you are looking for a user add a userID, like "/userID"', errorDetail: error.details[0].message }));
     try {
         const note = await Note.readById(req.params.noteID);
         return res.send(JSON.stringify(note));
@@ -63,7 +63,7 @@ router.get('/user/:userID', async (req, res) => {
     if (req.params.userID) {
         userid = parseInt(req.params.userID);
         // console.log(userid + ' userid fra route handler');
-        if (!userid) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: ?userID= should refer an author id (integer)' }));
+        if (!userid) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: ?userID= should refer a userID and should be an integer' }));
     }
 
     try {
