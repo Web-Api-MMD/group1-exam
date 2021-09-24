@@ -11,8 +11,6 @@ const ownNotes = document.querySelector('#ownNotes');
 const loggedInNav = document.querySelector('#navLoggedIn');
 const loggedOutNav = document.querySelector('#navLoggedOut');
 
-
-
 const APIaddress = 'http://localhost:2090';
 
 
@@ -52,7 +50,7 @@ if (signupBtn) {
             .then(response => response.json())
             .then(data => {
                 // console.log(data)
-                alert(`User created as ${data.userName} with role: ${data.userRole.roleName}`);
+                alert(`User created as ${data.userName} with role: ${data.userRole.roleName} <br> Now, please log in and start writing notes`);
 
                 // redirect to login page
 
@@ -116,14 +114,10 @@ if (logoutBtn) {
 
         console.log('Account logged out yo');
         window.location.href = "/frontend/index.html";
-
-
-        // loginDiv.classList.toggle('hidden');
-        // logoutDiv.classList.toggle('hidden');
     });
 }
 
-// on page load for notes
+// on page load for notes overview
 window.addEventListener('load', (e) => {
     // const token = localStorage.getItem('cn-authenticate-token');
 
