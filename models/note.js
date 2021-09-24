@@ -338,8 +338,8 @@ class Note {
 
 
 
-                    console.log('hej lige inden insertNote');
-                    console.log(this.noteCategory.categoryID + ' catID')
+                    // console.log('hej lige inden insertNote');
+                    // console.log(this.noteCategory.categoryID + ' catID')
                     // await pool.connect();
                     pool = await sql.connect(con);
                     const insertNote = await pool.request()
@@ -415,7 +415,7 @@ class Note {
                             insertNotes.push(newNote);
                             lastNoteIndex++;             
                     });
-                    console.log(JSON.stringify(insertNotes[0]) + ' insertNotes');
+                    // console.log(JSON.stringify(insertNotes[0]) + ' insertNotes');
 
                     const postNote = insertNotes[0];
                     // console.log(postNote + ' post nooooooote');

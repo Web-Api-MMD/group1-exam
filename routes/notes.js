@@ -87,7 +87,7 @@ router.post('/', async (req, res) => {
     try {
         const newNote = new Note(req.body);
         const note = await newNote.create();
-        console.log(note + ' note fra handler');
+        // console.log(note + ' note fra handler');
         return res.send(JSON.stringify(note));
     } catch (err) {
         console.log(JSON.stringify(err) + ' error fra post handler');
