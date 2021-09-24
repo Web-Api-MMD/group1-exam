@@ -1,6 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@700&display=swap');
 
+.hidden {
+    display: none !important; 
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -13,7 +17,7 @@ a {
     font-weight: 600;
     font-size: 20px;
 }
-p {
+p, label{
     line-height: 40px;
     font-family: 'Source Sans Pro', sans-serif;
     font-weight: 400;
@@ -132,7 +136,7 @@ h2 {
     border-radius: 5px;
 }
 
-.logInSignUp input, .addNote input, .addNote textarea {
+.logInSignUp input, .addNote input, .addNote textarea, .addNote select {
     margin-bottom: 2rem;
     border-radius: 5px;
     padding: 1rem;
@@ -165,7 +169,7 @@ h2 {
     margin-bottom: 6vh;
 }
 
-.discoverNotes {
+.discoverNotes, .myNotes {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -204,7 +208,7 @@ h2 {
     justify-content: space-between;
 }
 
-#noteContent {
+.noteContent {
     border: solid 1px #C4C4C4;
     border-radius: 5px;
 }
