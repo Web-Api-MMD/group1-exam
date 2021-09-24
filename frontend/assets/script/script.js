@@ -12,6 +12,10 @@ const loggedInNav = document.querySelector('#navLoggedIn');
 const loggedOutNav = document.querySelector('#navLoggedOut');
 const noteName = document.querySelector('#noteName');
 const noteContent = document.querySelector('#newNoteContent');
+const newNoteOutput = document.querySelector('#newNote');
+const insertNote = document.querySelector('#insertNote');
+const popUpModal = document.querySelector('#popUpModal');
+
 
 console.log(categorySelect);
 console.log(noteContent);
@@ -277,10 +281,22 @@ if (addNote) {
         console.log(JSON.stringify(newNote));
         console.log(APIaddress);
 
+        
         fetch(APIaddress + '/api/notes/', fetchOptions)
             .then(response => response.json())
             .then(data => {
-                // this is obviously here for the current VERY simple frontend interface...
+                const newNoteModal = `
+                <div class="modal" id="popUpModal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h2>${data.noteName}</h2>
+                        <p>${data.noteContent}</p>
+                        <span>${data.noteCategory.categoryName}</span>
+                    </div>
+                </div>
+                `;
+                newNoteOutput.innerHTML += newNoteModal;
+                // popUpModal.classList.add("show");
                 console.log(data);
             })
             .catch(error => {
