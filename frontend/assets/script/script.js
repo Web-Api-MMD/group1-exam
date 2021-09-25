@@ -286,18 +286,26 @@ if (addNote) {
             .then(response => response.json())
             .then(data => {
                 const newNoteModal = `
-                <div class="modal" id="popUpModal">
                     <div class="modal-content">
                         <span class="close">&times;</span>
-                        <h2>${data.noteName}</h2>
-                        <p>${data.noteContent}</p>
+                        <h2>You added a note:</h2>
+                        <h3>${data.noteName}</h3>
                         <span>${data.noteCategory.categoryName}</span>
+                        <p>${data.noteContent}</p>
                     </div>
-                </div>
                 `;
                 newNoteOutput.innerHTML += newNoteModal;
-                // popUpModal.classList.add("show");
-                console.log(data);
+                newNoteOutput.style.display = "block";
+
+                window.onclick = function (event) {
+                    if (event.target == newNoteOutput) {
+                        newNoteOutput.style.display = "none";
+
+                        //reload page
+                        location.reload();
+                        return false;
+                    }
+                };
             })
             .catch(error => {
                 console.log(error);
