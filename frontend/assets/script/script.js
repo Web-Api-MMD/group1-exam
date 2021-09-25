@@ -13,8 +13,7 @@ const loggedOutNav = document.querySelector('#navLoggedOut');
 const noteName = document.querySelector('#noteName');
 const noteContent = document.querySelector('#newNoteContent');
 const newNoteOutput = document.querySelector('#newNote');
-const insertNote = document.querySelector('#insertNote');
-const popUpModal = document.querySelector('#popUpModal');
+const closeModal = document.getElementsByClassName("close")[0];
 
 
 console.log(categorySelect);
@@ -23,7 +22,7 @@ console.log(noteContent);
 
 const APIaddress = 'http://localhost:2090';
 
-const token = localStorage.getItem('cn-authenticate-token');
+// const token = localStorage.getItem('cn-authenticate-token');
 
 
 //nav based on log in or not
@@ -281,22 +280,35 @@ if (addNote) {
         console.log(JSON.stringify(newNote));
         console.log(APIaddress);
 
-        
+
         fetch(APIaddress + '/api/notes/', fetchOptions)
             .then(response => response.json())
             .then(data => {
                 const newNoteModal = `
-                <div class="modal" id="popUpModal">
                     <div class="modal-content">
                         <span class="close">&times;</span>
                         <h2>${data.noteName}</h2>
-                        <p>${data.noteContent}</p>
                         <span>${data.noteCategory.categoryName}</span>
+                        <p>${data.noteContent}</p>
                     </div>
-                </div>
                 `;
                 newNoteOutput.innerHTML += newNoteModal;
-                // popUpModal.classList.add("show");
+                newNoteOutput.style.display = "block";
+
+                window.onclick = function (event) {
+                    if (event.target == newNoteOutput) {
+                        newNoteOutput.style.display = "none";
+
+                        //reload page
+                        location.reload();
+                        return false;
+                    }
+                };
+
+                // closeModal.onclick = function() {
+                //     newNoteOutput.style.display = "none";
+                // };
+
                 console.log(data);
             })
             .catch(error => {

@@ -4,9 +4,6 @@
 .hidden {
     display: none !important; 
 }
-.show {
-    display: none !important; 
-}
 
 body {
     margin: 0;
@@ -272,16 +269,19 @@ footer {
   
   /* Modal Content */
   .modal-content {
-    background-color: #fefefe;
+    background-color: #1E5A69;
+    color: white;
     margin: auto;
-    padding: 20px;
-    border: 1px solid #888;
+    border-radius: 5px;
+    padding: 1rem;
     width: 80%;
+    height: fit-content;
+    border: none;
   }
   
   /* The Close Button */
   .close {
-    color: #aaaaaa;
+    color: white;
     float: right;
     font-size: 28px;
     font-weight: bold;
