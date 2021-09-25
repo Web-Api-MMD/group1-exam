@@ -2,13 +2,17 @@ const express = require('express');
 const router = express.Router();
 
 const Note = require('../models/note');
+const cors = require('cors');
 
+router.use(cors());
 
 router.get('/', async (req, res) => {
     // need to call the Book class for DB access...
     let noteid;
     // let userid;
-    console.log(req.query.noteID);
+    console.log(JSON.stringify(req.body) + ' fra handler');
+    console.log(JSON.stringify(req.query) + ' query fra handler');
+
     if (req.query.noteID) {
         noteid = parseInt(req.query.noteID);
         console.log(noteid + ' noteid fra route handler');
@@ -30,6 +34,7 @@ router.get('/', async (req, res) => {
             return res.send(JSON.stringify(allNotes));
         }
     } catch (err) {
+        console.log(err + ' error');
         return res.status(500).send(JSON.stringify({ errorMessage: err + ' catch fra route handler' }));
     }
 });
@@ -41,7 +46,7 @@ router.get('/:noteID', async (req, res) => {
     // › › call await note.readById(req.params.noteid)
 
     const { error } = Note.validate(req.params);
-    if (error) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: noteid has to be an integer', errorDetail: error.details[0].message }));
+    if (error) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: noteid has to be an integer. If you are looking for a user add a userID, like "/userID"', errorDetail: error.details[0].message }));
     try {
         const note = await Note.readById(req.params.noteID);
         return res.send(JSON.stringify(note));
@@ -60,7 +65,7 @@ router.get('/user/:userID', async (req, res) => {
     if (req.params.userID) {
         userid = parseInt(req.params.userID);
         // console.log(userid + ' userid fra route handler');
-        if (!userid) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: ?userID= should refer an author id (integer)' }));
+        if (!userid) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: ?userID= should refer a userID and should be an integer' }));
     }
 
     try {
@@ -73,19 +78,22 @@ router.get('/user/:userID', async (req, res) => {
     }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', cors(), async (req, res) => {
     // › › validate req.body (payload) as note --> authors must have authorid!
     // › › instantiate note = new note(req.body)
     // › › call await note.create()
-
-    const { error } = Note.validate(req.body);
-    if (error) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: note payload formatted incorrectly', errorDetail: error.details[0].message }));
+    console.log(JSON.stringify(req.body) + ' log af req.body');
+    // const { error } = Note.validate(req.body);
+    // if (error) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: note payload formatted incorrectly', errorDetail: error.details[0].message }));
 
     try {
         const newNote = new Note(req.body);
         const note = await newNote.create();
+        // console.log(note + ' note fra handler');
         return res.send(JSON.stringify(note));
     } catch (err) {
+        console.log(JSON.stringify(err) + ' error fra post handler');
+        console.log(err + ' error fra post handler');
         return res.status(500).send(JSON.stringify({ errorMessage: err }));
     }
 });

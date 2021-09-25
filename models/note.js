@@ -7,19 +7,23 @@ const Joi = require('joi');
 
 const _ = require('lodash');
 
-const Author = require('./author');
+const Category = require('./category');
 
 class Note {
     constructor(noteObj) {
         this.noteID = noteObj.noteID;
         this.noteName = noteObj.noteName;
         this.noteContent = noteObj.noteContent;
+        this.noteCategory = noteObj.noteCategory;
+        this.noteAuthor = noteObj.noteAuthor;
         // if (noteObj.authors) this.authors = _.cloneDeep(noteObj.authors);
     }
     copy(noteObj) {
         if (noteObj.noteID) this.noteID = noteObj.noteID;
         if (noteObj.noteName) this.noteName = noteObj.noteName;
         if (noteObj.noteContent) this.noteContent = noteObj.noteContent;
+        if (noteObj.noteCategory) this.noteCategory = noteObj.noteCategory;
+        if (noteObj.noteAuthor) this.noteAuthor = noteObj.noteAuthor;
         // if (noteObj.authors) this.authors = _.cloneDeep(noteObj.authors);
     }
 
@@ -33,9 +37,21 @@ class Note {
                 .max(50),
                 // .required(),
             noteContent: Joi.string()
-                .min(1),
-            // userID: Joi.number()
-            //     .integer()
+                .min(1)
+                .max(4000), // NvarChar(MAX) is 4000 characters
+            noteCategory: Joi.object({
+                    categoryID: Joi.number()
+                    .integer()
+                    .min(1)
+                    .required(),
+                    categoryName: Joi.string()
+                    .min(1)
+                    .max(50)
+                    }
+            ),
+            noteAuthor: Joi.number()
+                .integer()
+                .min(1)
         });
 
         return schema.validate(validateNoteObj);
@@ -62,24 +78,41 @@ class Note {
                     const pool = await sql.connect(con);
                     let result;
                     if (noteid) {
+                        console.log('test 2');
                         result = await pool.request()
                             .input('noteID', sql.Int(), noteid)
+                            // OLD QUERY
+                            // .query(`
+                            // SELECT n.noteID, n.noteName, n.noteContent, n.FK_userID 
+                            // FROM cnNote n
+                            // WHERE n.noteID = @noteID
+                            // ORDER BY n.noteID, n.FK_userID
+                            // `);
+                            // OLD QUERY
+
+                            // TEST QUERY
                             .query(`
-                            SELECT n.noteID, n.noteName, n.noteContent, n.FK_userID 
+                            SELECT n.noteID, n.noteName, n.noteContent, n.FK_categoryID, n.FK_userID, c.categoryName
                             FROM cnNote n
+                            JOIN cnCategory c ON c.categoryID = n.FK_categoryID
                             WHERE n.noteID = @noteID
-                            ORDER BY n.noteID, n.FK_userID
-                        `);
+                            `);
                     } else {
                         console.log('test 3');
                         result = await pool.request()
-                            .query(`
-                            SELECT * 
-                            FROM cnNote n
+                        //     .query(`
+                        //     SELECT * 
+                        //     FROM cnNote n
+                        // `);
+                        .query(`
+                        SELECT n.noteID, n.noteName, n.noteContent, n.FK_categoryID, n.FK_userID, c.categoryName
+                        FROM cnNote n
+                        JOIN cnCategory c ON c.categoryID = n.FK_categoryID
                         `);
+
                     }
                     // console.log(JSON.stringify(result.recordset) + ' log af result recordset');
-                    
+                    // console.log('Result ny: ' + result);
                     
                     const notes = [];   // this is NOT validated yet
                     let lastNoteIndex = -1;
@@ -90,20 +123,31 @@ class Note {
                                 noteID: record.noteID,
                                 noteName: record.noteName,
                                 noteContent: record.noteContent,
+                                noteAuthor: record.FK_userID,
+                                noteCategory: {
+                                    categoryID: record.FK_categoryID,
+                                    categoryName: record.categoryName
+                                }
                             }
                             notesByUserID.push(newNote);
                             lastNoteIndex++;
                         } else {
                             console.log(`Note with id ${record.noteID} is a new note.`);
-                            console.log(record);
+                            console.log(JSON.stringify(record.FK_userID) + ' = record');
                             const newNote = {
                                 noteID: record.noteID,
                                 noteName: record.noteName,
                                 noteContent: record.noteContent,
+                                noteAuthor: record.FK_userID,
+                                noteCategory: {
+                                    categoryID: record.FK_categoryID,
+                                    categoryName: record.categoryName
+                                }
                             }
                             notes.push(newNote);
                             lastNoteIndex++;
                         }
+                        console.log(JSON.stringify(notes) + ' log af notes');
                     });
 
                     const validNotes = [];
@@ -111,7 +155,6 @@ class Note {
                     notes.forEach(note => {
                         const { error } = Note.validate(note);
                         if (error) throw { errorMessage: `Note.validate failed.` };
-
                         validNotes.push(new Note(note));
                     });
                     // console.log(validNotes + ' valid notes');
@@ -137,12 +180,12 @@ class Note {
                 try {
                     const pool = await sql.connect(con);
                     const result = await pool.request()
-                        .input('noteID', sql.Int(), noteid)
+                        // .input('noteID', sql.Int(), noteid)
                         .query(`
-                            SELECT n.noteID, n.noteName, n.noteContent, n.FK_userID 
-                            FROM cnNote n
-                            WHERE n.noteID = @noteID
-                            ORDER BY n.noteID, n.FK_userID
+                        SELECT n.noteID, n.noteName, n.noteContent, n.FK_categoryID, FK_userID, c.categoryName
+                        FROM cnNote n
+                        JOIN cnCategory c
+                            ON c.categoryID = n.FK_categoryID
                     `)
 
                     const notes = [];   // this is NOT validated yet
@@ -153,6 +196,11 @@ class Note {
                                 noteID: record.noteID,
                                 noteName: record.noteName,
                                 noteContent: record.noteContent,
+                                noteCategory: {
+                                    categoryID: record.FK_categoryID,
+                                    categoryName: record.categoryName
+                                },
+                                noteAuthor: record.FK_userID
                             }
                             notes.push(newNote);
                             lastNoteIndex++;
@@ -194,8 +242,9 @@ class Note {
                     const result = await pool.request()
                         .input('userID', sql.Int(), userid)
                         .query(`
-                            SELECT n.noteID, n.noteName, n.noteContent, n.FK_userID 
+                            SELECT n.noteID, n.noteName, n.noteContent, n.FK_userID, n.FK_categoryID, c.categoryName
                             FROM cnNote n
+                            JOIN cnCategory c ON c.categoryID = n.FK_categoryID
                             WHERE n.FK_userID = @userID
                             ORDER BY n.noteID, n.FK_userID
                     `);
@@ -215,6 +264,11 @@ class Note {
                                 noteID: record.noteID,
                                 noteName: record.noteName,
                                 noteContent: record.noteContent,
+                                noteCategory: {
+                                    categoryID: record.FK_categoryID,
+                                    categoryName: record.categoryName
+                                },
+                                noteAuthor: record.FK_userID
                             }
                             notesByUserID.push(newNote);
                             lastNoteIndex++;
@@ -246,12 +300,12 @@ class Note {
         });
     }
 
-    create() {
+  create() {
         return new Promise((resolve, reject) => {
             (async () => {
                 // › › check if authors exist in DB (i.e. Author.readById(authorid))
                 // › › connect to DB
-                // › › check if book already exists in DB (e.g. matching title and year)
+                // › › check if note already exists in DB (e.g. matching noteID)
                 // › › query DB (INSERT Book, SELECT Book WHERE SCOPE_IDENTITY(), INSERT BookAuthor)
                 // › › check if exactly one result
                 // › › keep bookid safe
@@ -264,64 +318,125 @@ class Note {
                 // › › close DB connection
 
                 try {
-                    this.authors.forEach(async (author) => {
-                        const authorCheck = await Author.readById(author.authorid);
-                    });
+                    // this.authors.forEach(async (author) => {
+                    //     const authorCheck = await Author.readById(author.authorid);
+                    // });
 
-                    const pool = await sql.connect(con);
-                    const resultCheckNote = await pool.request()
-                        .input('title', sql.NVarChar(50), this.title)
-                        .input('year', sql.Int(), this.year)
+                    // Checking if note already exists in DB from noteID and noteName
+                    let pool = await sql.connect(con);
+                    const checkNoteExists = await pool.request()
+                        .input('noteID', sql.Int(), this.noteID)
+                        .input('noteName', sql.NVarChar(50), this.noteName)
                         .query(`
                             SELECT *
-                            FROM liloBook b
-                            WHERE b.title = @title AND b.year = @year
-                        `)
+                            FROM cnNote n
+                            WHERE n.noteID = @noteID AND n.noteName = @noteName
+                        `);
 
-                    if (resultCheckNote.recordset.length == 1) throw { statusCode: 409, errorMessage: `Conflict. Book already exists, bookid: ${resultCheckNote.recordset[0].bookid}` }
-                    if (resultCheckNote.recordset.length > 1) throw { statusCode: 500, errorMessage: `Multiple hits of unique data. Corrupt database, bookid: ${resultCheckNote.recordset[0].bookid}` }
+                    if (checkNoteExists.recordset.length == 1) throw { statusCode: 409, errorMessage: `Error. Note with ID already exists, noteID: ${checkNoteExists.recordset[0].noteID}. Note name is: ${checkNoteExists.recordset[0].noteName}` }
+                    if (checkNoteExists.recordset.length > 1) throw { statusCode: 500, errorMessage: `Multiple hits of unique data. Corrupt database, noteID: ${checkNoteExists.recordset[0].noteID}. Note name is: ${checkNoteExists.recordset[0].noteName}` }
 
-                    await pool.connect();
-                    const result00 = await pool.request()
-                        .input('title', sql.NVarChar(50), this.title)
-                        .input('year', sql.Int(), this.year)
-                        .input('link', sql.NVarChar(255), this.link)
-                        .input('authorid', sql.Int(), this.authors[0].authorid)
+
+
+                    // console.log('hej lige inden insertNote');
+                    // console.log(this.noteCategory.categoryID + ' catID')
+                    // await pool.connect();
+                    pool = await sql.connect(con);
+                    const insertNote = await pool.request()
+                        // .input('noteID', sql.Int(), this.noteID)
+                        .input('noteName', sql.NVarChar(50), this.noteName)
+                        .input('noteContent', sql.NVarChar(4000), this.noteContent)
+                        .input('FK_userID', sql.Int(), this.noteAuthor)
+                        .input('FK_categoryID', sql.Int(), this.noteCategory.categoryID)
+                        .input('categoryName', sql.NVarChar(50), this.noteCategory.categoryName)
+                        // .query(`
+                        //         INSERT INTO cnNote ([noteName], [noteContent], [FK_categoryID], [FK_userID])
+                        //         VALUES (@noteName, @noteContent, @FK_categoryID, @FK_userID);
+
+                        //         SELECT *
+                        //         FROM cnNote
+                        //         WHERE noteID = SCOPE_IDENTITY();
+                        // `);
                         .query(`
-                                INSERT INTO liloBook (title, year, link)
-                                VALUES (@title, @year, @link);
-                        
-                                SELECT *
-                                FROM liloBook
-                                WHERE bookid = SCOPE_IDENTITY();
+                            INSERT INTO cnNote ([noteName], [noteContent], [FK_categoryID], [FK_userID])
+                            VALUES (@noteName, @noteContent, @FK_categoryID, @FK_userID);
 
-                                INSERT INTO liloBookAuthor (FK_bookid, FK_authorid)
-                                VALUES (SCOPE_IDENTITY(), @authorid);
-                        `)
+                            SELECT n.noteID, n.noteName, n.noteContent, n.FK_userID, n.FK_categoryID, c.categoryName
+                            FROM cnNote n
+                                JOIN cnCategory c
+                                ON c.categoryID = n.FK_categoryID
 
-                    if (!result00.recordset[0]) throw { statusCode: 500, errorMessage: `DB server error, INSERT failed.` }
-                    const bookid = result00.recordset[0].noteid;
+                            WHERE n.noteID = SCOPE_IDENTITY();
+                    `);
+                    // console.log(this.noteName + ' NoteName log');
+                    // console.log(this.noteContent + ' noteContent log');
+                    // console.log(this.noteAuthor + ' noteAuthor log');
+                    // console.log(this.noteCategory.categoryID + ' categoryID log');
 
-                    this.authors.forEach(async (author, index) => {
-                        if (index > 0) {
-                            await pool.connect();
-                            const resultAuthors = await pool.request()
-                                .input('bookid', sql.Int(), bookid)
-                                .input('authorid', sql.Int(), author.authorid)
-                                .query(`
-                                    INSERT INTO liloBookAuthor (FK_bookid, FK_authorid)
-                                    VALUES (@bookid, @authorid)
-                                `)
-                        }
-                    })
+                    // console.log(JSON.stringify(insertNote.recordsets[0]) + ' insertNote');
+                        //GEM
+                        // SELECT SCOPE_IDENTITY()
+                        // FROM cnNote
 
+                        // INSERT INTO cnNote (noteID)
+                        // VALUES (SCOPE_IDENTITY())
+
+                        //GAMMEL
+                        // INSERT INTO cnNote (noteID, noteName, noteContent, FK_userID, FK_categoryID)
+                        // SELECT noteID, @noteName, @noteContent, @FK_userID, @FK_categoryID
+                        // FROM cnNote
+                        // WHERE @noteID = SCOPE_IDENTITY();
+
+                    // const insertResponse = {
+                    //     noteID: insertNote.recordsets.noteID,
+                    //     noteName: insertNote.recordsets.noteName,
+                    //     noteContent: insertNote.recordsets.noteContent,
+                    //     noteCategory: {
+                    //         categoryID: insertNote.recordsets.FK_categoryID,
+                    //         // categoryName: insertNote.recordsets.categoryName,
+                    //     },
+                    //     noteAuthor: insertNote.recordsets.FK_userID
+                    // }
+                    const insertNotes = [];   // this is NOT validated yet
+                    let lastNoteIndex = -1;
+                    insertNote.recordset.forEach(record => {
+                        console.log(record);
+                        console.log(' inde i forEach insert note');
+                            const newNote = {
+                                noteID: record.noteID,
+                                noteName: record.noteName,
+                                noteContent: record.noteContent,
+                                noteCategory: {
+                                    categoryID: record.FK_categoryID,
+                                    categoryName: record.categoryName
+                                },
+                                noteAuthor: record.FK_userID
+                            }
+                            insertNotes.push(newNote);
+                            lastNoteIndex++;             
+                    });
+                    // console.log(JSON.stringify(insertNotes[0]) + ' insertNotes');
+
+                    const postNote = insertNotes[0];
+                    // console.log(postNote + ' post nooooooote');
+                    const { error } = Note.validate(postNote);
+                    // console.log(error + ' error fra validate'); // HER FINDER VI MÅSKE FEJLEN
+                    if (error) throw { statusCode: 500, errorMessage: 'Corrupt note informaion in database.' }
+
+                    // console.log(JSON.stringify(insertNote.recordset) + ' log af insert note recordset');
+                    if (!insertNote.recordset[0]) throw { statusCode: 404, errorMessage: `Error inserting into DB, INSERT not found.` }
+                    if (!insertNote.recordset[0]) throw { statusCode: 500, errorMessage: `DB server error, INSERT failed.` }
+                    
                     sql.close();
-
-                    const note = await Note.readById(noteid);
+                    
+                    const note = await Note.readById(postNote.noteID);
+                    // console.log(insertResponse + ' console log af insertResponse');
 
                     resolve(note);
+                    // resolve(insertNote);
 
                 } catch (error) {
+                    // console.log(error);
                     reject(error);
                 }
 
@@ -329,7 +444,7 @@ class Note {
 
             })();
         });
-    }
+    }  
 
     static delete(noteID) {
         return new Promise((resolve, reject) => {

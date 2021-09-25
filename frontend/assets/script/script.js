@@ -2,66 +2,136 @@ const userEmail = document.querySelector('#userEmail');
 const userPassword = document.querySelector('#userPassword');
 const loginBtn = document.querySelector('#loginButton');
 const logoutBtn = document.querySelector('#logoutButton');
+const signupBtn = document.querySelector('#signupButton');
+const addNote = document.querySelector('#submitButton');
 const outputDiv = document.querySelector('#outputDiv');
+const noAccess = document.querySelector('#noAccess');
+const categorySelect = document.querySelector('#categories');
+const ownNotes = document.querySelector('#ownNotes');
+const loggedInNav = document.querySelector('#navLoggedIn');
+const loggedOutNav = document.querySelector('#navLoggedOut');
+const noteName = document.querySelector('#noteName');
+const noteContent = document.querySelector('#newNoteContent');
+const newNoteOutput = document.querySelector('#newNote');
+const insertNote = document.querySelector('#insertNote');
+const popUpModal = document.querySelector('#popUpModal');
+
+
+console.log(categorySelect);
+console.log(noteContent);
 
 
 const APIaddress = 'http://localhost:2090';
 
-// log in
-// loginBtn.addEventListener('click', (e) => {
-//     if(userEmail.value && userPassword.value) {
-//         const payload = {
-//             userEmail: userEmail.value,
-//             userPassword: userPassword.value
-//         }
+const token = localStorage.getItem('cn-authenticate-token');
 
-//         const fetchOptions = {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             },
-//             body: JSON.stringify(payload)
-//         }
 
-//         fetch(APIaddress + '/api/accounts/login', fetchOptions)
-//         .then(response => {
-//             const token = response.headers.get('x-authenticate-token');
-//             localStorage.setItem('x-authenticate-token', token); 
-//             console.log(token);
-
-//             return response.json();
-//         })
-//         .then(data => {
-//             console.log(data);
-//             localStorage.setItem('accountInfo', JSON.stringify(data));
-
-//             loginDiv.classList.toggle('hidden');
-//             logoutDiv.classList.toggle('hidden');
-//         })
-//         .catch(error => {
-//             alert('There was an error. Wrong username or password.');
-//         })
-
-//     } else {
-//         alert('Please enter user email and password');
-//     }
-
-// });
-
-// // log out
-// logoutBtn.addEventListener('click', (e) => {
-//     window.localStorage.removeItem('x-authenticate-token');
-//     window.localStorage.removeItem('accountInfo');
-
-//     console.log('Account logged out yo');
-
-//     loginDiv.classList.toggle('hidden');
-//     logoutDiv.classList.toggle('hidden');
-// });
-
-// on page load
+//nav based on log in or not
 window.addEventListener('load', (e) => {
     const token = localStorage.getItem('cn-authenticate-token');
+
+    if (token) {
+        console.log('vi har fandeme en token vennerne og den er: ' + token);
+
+        loggedInNav.classList.remove("hidden");
+        loggedOutNav.classList.add("hidden");
+    }
+});
+
+
+//sign up 
+if (signupBtn) {
+    signupBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const user = {
+            userName: userName.value,
+            userEmail: userEmail.value,
+            userPassword: userPassword.value
+        }
+
+        const fetchOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(user)
+        }
+        console.log(user)
+
+        fetch(APIaddress + '/api/accounts/', fetchOptions)
+            .then(response => response.json())
+            .then(data => {
+                // console.log(data)
+                alert(`User created as ${data.userName} with role: ${data.userRole.roleName} <br> Now, please log in and start writing notes`);
+
+                // redirect to login page
+
+            })
+            .catch(error => {
+                alert('Something went wrong, try again')
+            })
+    });
+};
+
+// log in
+if (loginBtn) {
+    loginBtn.addEventListener('click', (e) => {
+        if (userEmail.value && userPassword.value) {
+            const payload = {
+                userEmail: userEmail.value,
+                userPassword: userPassword.value
+            }
+
+            const fetchOptions = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            }
+
+            fetch(APIaddress + '/api/accounts/login', fetchOptions)
+                .then(response => {
+                    const token = response.headers.get('cn-authenticate-token');
+                    localStorage.setItem('cn-authenticate-token', token);
+                    console.log(response);
+
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data);
+                    localStorage.setItem('accountInfo', JSON.stringify(data));
+
+                    //  --- sendes til anden side når logget ind 
+                    window.location.href = "./discoverIntro.html";
+                })
+                .catch(error => {
+                    console.log(error);
+                    alert('Wrong username or password. Please try again');
+                })
+
+        } else {
+            alert('Please enter user email and password');
+        }
+
+    });
+}
+
+// // log out
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', (e) => {
+        e.preventDefault(); // no refresh - else no redirect
+        window.localStorage.removeItem('cn-authenticate-token');
+        window.localStorage.removeItem('accountInfo');
+
+        console.log('Account logged out yo');
+        window.location.href = "/frontend/index.html";
+    });
+}
+
+// on page load for notes overview
+window.addEventListener('load', (e) => {
+    // const token = localStorage.getItem('cn-authenticate-token');
 
     const fetchOptions = {
         headers: {
@@ -70,39 +140,169 @@ window.addEventListener('load', (e) => {
         }
     }
     if (token) fetchOptions.headers['cn-authenticate-token'] = token;
-    console.log(fetchOptions.headers);
+    // console.log(fetchOptions.headers);
 
     // part to render notes
-    fetchOptions.method = 'GET';
-    fetch(APIaddress + '/api/notes', fetchOptions)
-        .then(response => {
-            return response.json()
-        })
-        .then(data => {
-            for (let i = 0; i < data.length; i++) {
-                let htmlOutput = `
-                <section class="category">
-                    <h3>Notes on CSS</h3>
-                    <a href="./discoverCategory.html">See more</a>
-                </section>
-                <article class="description">
-                    <p>Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore </p>
-                </article>
-                <div class="notes">
-                <article id="noteContent">
-                    <p>${data[i].noteContent}</p>
-                    <h4>${data[i].noteName}</h4>
-                </article>
+    if (outputDiv && token) {
+        console.log(token);
+        fetchOptions.method = 'GET';
+        fetch(APIaddress + '/api/notes/', fetchOptions)
+            .then(response => {
+                // console.log(response);
+                return response.json()
+            })
+            .then(data => {
+                // console.log(data);
+
+                for (let i = 0; i < 11; i++) { // i < data.length
+                    let htmlOutput = `
+                    <section class="category">
+                        <h3>Notes on ${data[i].noteCategory.categoryName}</h3>
+                        <a href="./discoverCategory.html">See more</a>
+                    </section>
+                    <article class="description">
+                        <p>Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore </p>
+                    </article>
+                    <div class="notes">
+                    <article class="noteContent">
+                        <p>${data[i].noteContent}</p>
+                        <h4>${data[i].noteName}</h4>
+                    </article>
+                    </div>
+                    `;
+
+                    outputDiv.innerHTML += htmlOutput;
+                    noAccess.classList.add("hidden");
+                }
+
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
+});
+
+
+//render notes by userID
+window.addEventListener('load', (e) => {
+    const token = localStorage.getItem('cn-authenticate-token');
+
+    const fetchOptions = {
+        headers: {
+            'Content-Type': 'application/json',
+
+        },
+    }
+    if (token) fetchOptions.headers['cn-authenticate-token'] = token;
+
+
+    // part to render notes
+    if (ownNotes && token) {
+        console.log(token);
+        fetchOptions.method = 'GET';
+        fetch(APIaddress + '/api/notes/user/', fetchOptions)
+            .then(response => {
+                return response.json()
+            })
+            .then(data => {
+                for (let i = 0; i < data.length; i++) {
+                    let htmlOutput = `
+                    <article class="noteContent">
+                        <p>${data[i].noteContent}</p>
+                        <h4>${data[i].noteName}</h4>
+                    </article>
+                    `;
+
+                    ownNotes.innerHTML += htmlOutput;
+                    noAccess.classList.add("hidden");
+                }
+
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
+});
+
+
+// add note to database
+if (addNote) {
+    const token = localStorage.getItem('cn-authenticate-token');
+
+    const fetchOptions = {
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    }
+    if (token) fetchOptions.headers['cn-authenticate-token'] = token;
+
+    if (token) {
+        console.log(token);
+        fetchOptions.method = 'GET';
+        fetch(APIaddress + '/api/categories/', fetchOptions)
+            .then(response => {
+                return response.json();
+            })
+            .then(data => {
+                console.log(data[0].categoryID);
+                console.log(data[0].categoryName);
+                for (let i = 0; i < data.length; i++) {
+                    let htmlOutput = `
+                        <option value="${data[i].categoryID}">${data[i].categoryName}</option>
+                    `;
+
+                    categorySelect.innerHTML += htmlOutput;
+                }
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
+
+    addNote.addEventListener('click', (e) => {
+        e.preventDefault();
+        const newNote = {
+            noteName: noteName.value,
+            noteContent: noteContent.value,
+            noteCategory: {
+                categoryID: categorySelect.value
+            },
+            noteAuthor: 5
+        }
+
+        const fetchOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newNote)
+            // body: newNote
+        }
+        console.log(JSON.stringify(newNote));
+        console.log(APIaddress);
+
+        
+        fetch(APIaddress + '/api/notes/', fetchOptions)
+            .then(response => response.json())
+            .then(data => {
+                const newNoteModal = `
+                <div class="modal" id="popUpModal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h2>${data.noteName}</h2>
+                        <p>${data.noteContent}</p>
+                        <span>${data.noteCategory.categoryName}</span>
+                    </div>
                 </div>
                 `;
-
-                outputDiv.innerHTML += htmlOutput;
-            }
-
-        })
-        .catch(error => {
-            console.log(error);
-        });
-
-
-});
+                newNoteOutput.innerHTML += newNoteModal;
+                // popUpModal.classList.add("show");
+                console.log(data);
+            })
+            .catch(error => {
+                console.log(error);
+                console.log(JSON.stringify(error));
+                alert('Something went wrong, try again')
+            })
+    });
+}

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="./assets/style/style.css">
     <title>Log in CrossNotes</title>
 </head>
+
 <body>
     <nav class="menu white" id="navLoggedOut">
         <h1>CrossNotes</h1>
@@ -29,21 +31,22 @@
         </ul>
     </nav>
 
-    <main class="blue logInSignUpMain">
-        <h2>Log in</h2>
-        <section id="logIn" class="logInSignUp">
-            <input type="text" id="userEmail" name="userEmail" placeholder="Email"/>
-            <br>
-            <input type="password" id="userPassword" name="userPassword" placeholder="Password" />
-            <br>
-            <button id="loginButton" class="buttonBasic">Log in</button>
-        </section>
+    <main class="myNotes white">
+        <h2>My own notes</h2>
+        <div class="notes" id="ownNotes">
+            <div id="noNotes">
+                <p>You haven't written any notes yet. Start by adding a note</p>
+                <button class="buttonBasic"> <a href="..//frontend/addNote.html">Add note</a> </button>
+            </div>
+            
+        </div>
     </main>
-    
-    <footer>
+
+    <footer class="blue">
         <p> &copy; @2021 Anna, Frederikke & Scott</p>
     </footer>
 
-    <script src="../frontend/assets/script/script.js"></script>
+    <script src="/frontend/assets/script/script.js"></script>
 </body>
+
 </html>
