@@ -90,19 +90,19 @@ router.post('/', async (req, res) => {
     }
 });
 
-// router.delete('/:noteid', async (req, res) => {
-//     // › › validate req.params.noteid as noteid
-//     // › › call await note.delete(req.params.noteid)
-//     const { error } = Note.validate(req.params);
-//     if (error) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: noteid has to be an integer', errorDetail: error.details[0].message }));
+router.delete('/:noteID', async (req, res) => {
+    // › › validate req.params.noteid as noteid
+    // › › call await note.delete(req.params.noteid)
+    const { error } = Note.validate(req.params);
+    if (error) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: noteid has to be an integer', errorDetail: error.details[0].message }));
 
-//     try {
-//         const note = await Note.delete(req.params.noteid);
-//         return res.send(JSON.stringify(note));
-//     } catch (err) {
-//         return res.status(500).send(JSON.stringify({ errorMessage: err }));
-//     }
-// });
+    try {
+        const note = await Note.delete(req.params.noteID);
+        return res.send(JSON.stringify(note));
+    } catch (err) {
+        return res.status(500).send(JSON.stringify({ errorMessage: err }));
+    }
+});
 
 // router.put('/:noteid', async (req, res) => {
 //     // › › validate req.params.noteid as noteid
