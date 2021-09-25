@@ -287,7 +287,8 @@ if (addNote) {
                 const newNoteModal = `
                     <div class="modal-content">
                         <span class="close">&times;</span>
-                        <h2>${data.noteName}</h2>
+                        <h2>You added a note:</h2>
+                        <h3>${data.noteName}</h3>
                         <span>${data.noteCategory.categoryName}</span>
                         <p>${data.noteContent}</p>
                     </div>
