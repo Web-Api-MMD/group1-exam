@@ -101,8 +101,8 @@ if (loginBtn) {
                     // localStorage.setItem('accountInfo', JSON.stringify(data));
                     localStorage.setItem('accountInfo', data);
                     const accountInfo = localStorage.getItem('accountInfo');
+                    // const accountInfo = localStorage.getItem('accountInfo');
 
-                    // console.log(JSON.stringify(accountInfo));
 
                     console.log(accountInfo);
                     //  --- sendes til anden side når logget ind 
@@ -191,6 +191,7 @@ window.addEventListener('load', (e) => {
     const token = localStorage.getItem('cn-authenticate-token');
     const accountInfo = localStorage.getItem('accountInfo');
     accountInfoObj = JSON.parse(accountInfo); // convert accountInfo from string to object
+
     const fetchOptions = {
         headers: {
             'Content-Type': 'application/json',
@@ -265,6 +266,9 @@ if (addNote) {
     }
 
     addNote.addEventListener('click', (e) => {
+        const accountInfo = localStorage.getItem('accountInfo');
+        accountInfoObj = JSON.parse(accountInfo); // convert accountInfo from string to object
+
         e.preventDefault();
         const newNote = {
             noteName: noteName.value,
@@ -272,7 +276,7 @@ if (addNote) {
             noteCategory: {
                 categoryID: categorySelect.value
             },
-            noteAuthor: 5
+            noteAuthor: accountInfoObj.userID
         }
 
         const fetchOptions = {
@@ -285,7 +289,6 @@ if (addNote) {
         }
         console.log(JSON.stringify(newNote));
         console.log(APIaddress);
-
 
         fetch(APIaddress + '/api/notes/', fetchOptions)
             .then(response => response.json())
