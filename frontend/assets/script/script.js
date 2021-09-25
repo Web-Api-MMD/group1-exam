@@ -14,10 +14,8 @@ const noteName = document.querySelector('#noteName');
 const noteContent = document.querySelector('#newNoteContent');
 const newNoteOutput = document.querySelector('#newNote');
 const closeModal = document.getElementsByClassName("close")[0];
-
-
-console.log(categorySelect);
-console.log(noteContent);
+const noNotes = document.querySelector('#noNotes');
+const hasNotes = document.querySelector('#hasNotes');
 
 
 const APIaddress = 'http://localhost:2090';
@@ -72,6 +70,8 @@ if (signupBtn) {
     });
 };
 
+
+let accountInfo;
 // log in
 if (loginBtn) {
     loginBtn.addEventListener('click', (e) => {
@@ -98,11 +98,15 @@ if (loginBtn) {
                     return response.json();
                 })
                 .then(data => {
-                    console.log(data);
-                    localStorage.setItem('accountInfo', JSON.stringify(data));
+                    // localStorage.setItem('accountInfo', JSON.stringify(data));
+                    localStorage.setItem('accountInfo', data);
+                    const accountInfo = localStorage.getItem('accountInfo');
 
+                    // console.log(JSON.stringify(accountInfo));
+
+                    console.log(accountInfo);
                     //  --- sendes til anden side når logget ind 
-                    window.location.href = "./discoverIntro.html";
+                    // window.location.href = "./discoverIntro.html"; // udkommentér senere
                 })
                 .catch(error => {
                     console.log(error);
@@ -116,7 +120,7 @@ if (loginBtn) {
     });
 }
 
-// // log out
+// log out
 if (logoutBtn) {
     logoutBtn.addEventListener('click', (e) => {
         e.preventDefault(); // no refresh - else no redirect
@@ -130,7 +134,7 @@ if (logoutBtn) {
 
 // on page load for notes overview
 window.addEventListener('load', (e) => {
-    // const token = localStorage.getItem('cn-authenticate-token');
+    const token = localStorage.getItem('cn-authenticate-token');
 
     const fetchOptions = {
         headers: {
@@ -152,7 +156,7 @@ window.addEventListener('load', (e) => {
             })
             .then(data => {
                 // console.log(data);
-
+                console.log(accountInfo);
                 for (let i = 0; i < 11; i++) { // i < data.length
                     let htmlOutput = `
                     <section class="category">
@@ -185,7 +189,8 @@ window.addEventListener('load', (e) => {
 //render notes by userID
 window.addEventListener('load', (e) => {
     const token = localStorage.getItem('cn-authenticate-token');
-
+    const accountInfo = localStorage.getItem('accountInfo');
+    accountInfoObj = JSON.parse(accountInfo); // convert accountInfo from string to object
     const fetchOptions = {
         headers: {
             'Content-Type': 'application/json',
@@ -194,32 +199,33 @@ window.addEventListener('load', (e) => {
     }
     if (token) fetchOptions.headers['cn-authenticate-token'] = token;
 
-
     // part to render notes
+
     if (ownNotes && token) {
-        console.log(token);
+        const loggedInID = accountInfoObj.userID;
+
         fetchOptions.method = 'GET';
-        fetch(APIaddress + '/api/notes/user/', fetchOptions)
+        fetch(APIaddress + '/api/notes/user/' + loggedInID, fetchOptions)
             .then(response => {
                 return response.json()
             })
             .then(data => {
-                for (let i = 0; i < data.length; i++) {
-                    let htmlOutput = `
-                    <article class="noteContent">
-                        <p>${data[i].noteContent}</p>
-                        <h4>${data[i].noteName}</h4>
-                    </article>
-                    `;
-
-                    ownNotes.innerHTML += htmlOutput;
-                    noAccess.classList.add("hidden");
-                }
-
+                console.log(data);
+                    for (let i = 0; i < data.length; i++) {
+                        let htmlOutput = `
+                        <article class="noteContent">
+                            <p>${data[i].noteContent}</p>
+                            <h4>${data[i].noteName}</h4>
+                        </article>
+                        `;
+                        hasNotes.innerHTML += htmlOutput;
+                        noNotes.classList.add("hidden");
+                    }
             })
             .catch(error => {
                 console.log(error);
             });
+    
     }
 });
 
