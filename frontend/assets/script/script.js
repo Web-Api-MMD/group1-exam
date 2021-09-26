@@ -233,7 +233,10 @@ window.addEventListener('load', (e) => {
 });
 
 deleteNoteBtn(){
-    
+    fetch(APIaddress + '/api/notes', fetchOptions)
+            .then(response => {
+                return response.json();
+            })
 };
 
 
