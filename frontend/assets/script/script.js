@@ -14,10 +14,11 @@ const noteName = document.querySelector('#noteName');
 const noteContent = document.querySelector('#newNoteContent');
 const newNoteOutput = document.querySelector('#newNote');
 const closeModal = document.getElementsByClassName("close")[0];
-const deleteNoteBtn = document.getElementById("#deleteButton");
+const deleteNoteBtn = document.querySelector("#deleteButton");
 const noNotes = document.querySelector('#noNotes');
 const hasNotes = document.querySelector('#hasNotes');
 
+console.log(deleteNoteBtn);
 
 const APIaddress = 'http://localhost:2090';
 
@@ -186,7 +187,7 @@ window.addEventListener('load', (e) => {
             });
     }
 });
-
+console.log(deleteNoteBtn);
 
 //render notes by userID
 window.addEventListener('load', (e) => {
@@ -215,31 +216,40 @@ window.addEventListener('load', (e) => {
                 return response.json()
             })
             .then(data => {
-                console.log(data.length);
+                console.log(data);
                 for (let i = 0; i < data.length; i++) {
+                    const currentNoteID = data[i].noteID;
+                    console.log(currentNoteID);
                     let htmlOutput = `
                     <article class="noteContent">
-                        <button id="deleteButton" class="buttonBasic" onclick="deleteNote()">Delete note</button>
+                        <button id="deleteButton" class="buttonBasic">Delete note</button>
                         <h4>${data[i].noteName}</h4>
                         <p>${data[i].noteContent}</p>
                     </article>
                     `;
 
                     hasNotes.innerHTML += htmlOutput;
-                    noAccess.classList.add("hidden");
+                    // noAccess.classList.add("hidden");
                 }
+                console.log(deleteNoteBtn);
+                deleteNoteBtn.onclick = function (currentNoteID) {
+                        fetchOptions.method = 'DELETE';
+                        fetch(APIaddress + '/api/notes/' + currentNoteID, fetchOptions);
 
+                        location.reload();
+                        return false;
+                };
+                // deleteNoteBtn.onclick((currentNoteID) => {
+                //     fetchOptions.method = 'DELETE';
+                //     fetch(APIaddress + '/api/notes/' + currentNoteID, fetchOptions);
+                // });
             })
             .catch(error => {
                 console.log(error);
             });
-    
     }
 });
 
-// deleteNoteBtn(){
-    
-// };
 
 
 // add note to database
