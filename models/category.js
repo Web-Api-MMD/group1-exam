@@ -94,7 +94,7 @@ class Category {
                     });
 
                     if (categories.length == 0) throw { statusCode: 404, errorMessage: `Category not found with provided categoryID: ${categoryID}` }
-                    if (categories.length > 1) throw { statusCode: 500, errorMessage: `Multiple categories found. Error in database with categoryID: ${categoryID}` }
+                    // if (categories.length > 1) throw { statusCode: 500, errorMessage: `Multiple categories found. Error in database with categoryID: ${categoryID}` }
 
                     const { error } = Category.validate(categories[0]);
                     if (error) throw { statusCode: 500, errorMessage: `Corrupt Category informaion in database, categoryID: ${categoryID}` }
