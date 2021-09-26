@@ -7,14 +7,12 @@ const con = config.get('dbConfig_UCN');
 const salt = parseInt(config.get('saltRounds'));
 
 class Account {
-    // accountObj: {userEmail, userPassword, userName}
     constructor(accountObj) {
         this.userEmail = accountObj.userEmail;
         this.userPassword = accountObj.userPassword;
         this.userName = accountObj.userName;
     }
 
-    // static validate(accountObj)
     static validate(accountObj) {
         const schema = Joi.object({
             userEmail: Joi.string()
@@ -57,22 +55,12 @@ class Account {
                     .max(255)
             }).required()
         });
-        console.log(JSON.stringify(accountResponse) + ' Account response');
         return schema.validate(accountResponse);
     }
 
     static checkCredentials(accountObj) {
         return new Promise((resolve, reject) => {
             (async () => {
-                // connect to DB
-                // make a query (using the pool object)
-                // check if there was a result
-                // !!! -> check the hashed password with bcrypt!
-                // if yes -> check format
-                //  if format OK -> resolve
-                // if no in any case, then throw and error and reject with error
-                // CLOSE THE DB CONNECTION !!!!!!!!!!!!!!!!!!!!!!!!!!!!! !!!
-
                 try {
                     const pool = await sql.connect(con);
                     const result = await pool.request()
@@ -86,14 +74,12 @@ class Account {
                                 ON u.FK_roleID = r.roleID
                             WHERE u.userEmail = @userEmail
                         `);
-                    console.log(result + ' log af result inde i chech credentials');
-                    console.log('Inde i check credentials');
 
-                    if (!result.recordset[0]) throw { statusCode: 404, errorMessage: 'User not found with provided credentials.' }
-                    if (result.recordset.length > 1) throw { statusCode: 500, errorMessage: 'Multiple hits of unique data. Corrupt database.' }
+                    if (!result.recordset[0]) throw { statusCode: 404, errorMessage: 'User not found with the information provided.' }
+                    if (result.recordset.length > 1) throw { statusCode: 500, errorMessage: 'Error. User with provided information already found in database.' }
 
                     const bcrypt_result = await bcrypt.compare(accountObj.userPassword, result.recordset[0].passwordValue);
-                    if (!bcrypt_result) throw { statusCode: 404, errorMessage: 'User not found with provided credentials.' }
+                    if (!bcrypt_result) throw { statusCode: 404, errorMessage: 'User not found with the information provided.' }
 
                     const accountResponse = {
                         userID: result.recordset[0].userID,
@@ -104,12 +90,7 @@ class Account {
                             roleDescription: result.recordset[0].roleDescription
                         }
                     };
-                    console.log(accountResponse + ' AccountResponse inde i check credentials');
 
-                    // check if the format is correct!
-                    // will need a proper validate method for that
-
-                    // *** static validateResponse(accountResponse)
                     const { error } = Account.validateResponse(accountResponse);
                     if (error) throw { statusCode: 500, errorMessage: 'Corrupt user account informaion in database.' }
 
@@ -125,19 +106,9 @@ class Account {
         });
     }
 
-    // *** NEW static method readByEmail(accountObj)
     static readByEmail(accountObj) {
         return new Promise((resolve, reject) => {
             (async () => {
-                // connect to DB
-                // query the DB (SELECT WHERE userEmail)
-                // check if there is ONE result --> good
-                //      else throw error
-                // check format (validateResponse)
-                // resolve with accountResponse
-                // if any errors reject with error
-                // CLOSE THE DB CONNECTION
-
                 try {
                     const pool = await sql.connect(con);
                     const result = await pool.request()
