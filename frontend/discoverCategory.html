@@ -34,13 +34,12 @@
     <main class="discoverNotes white">
         <h2>Discover notes</h2>
         <div>
-            <section class="category">
-                <h3>Notes on UX/UI</h3>
-                <a href="./discoverNotes.html">Return</a>
-            </section>
-            <article class="description">
-                <p>Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore </p>
-            </article>
+            <div id="noAccess">
+                <p>Sorry! Access denied</p>
+                <p>You are not logged in. Please log in or sign up to read notes</p>
+                <button class="buttonBasic"> <a href="../frontend/logIn.html">Log in</a> </button>
+                <button class="buttonBasic"> <a href="../frontend/signup.html">Sign up</a> </button>
+            </div>
             <div class="notes">
                 <article id="noteContent">
                     <p></p>
@@ -55,7 +54,7 @@
         <p> &copy; @2021 Anna, Frederikke & Scott</p>
     </footer>
 
-    <script src="/frontend/script.js"></script>
+    <script src="../frontend/assets/script/script.js"></script>
 </body>
 
 </html>
