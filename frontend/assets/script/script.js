@@ -14,6 +14,7 @@ const noteName = document.querySelector('#noteName');
 const noteContent = document.querySelector('#newNoteContent');
 const newNoteOutput = document.querySelector('#newNote');
 const closeModal = document.getElementsByClassName("close")[0];
+const deleteNoteBtn = document.getElementById("#deleteButton");
 
 
 console.log(categorySelect);
@@ -207,8 +208,9 @@ window.addEventListener('load', (e) => {
                 for (let i = 0; i < data.length; i++) {
                     let htmlOutput = `
                     <article class="noteContent">
-                        <p>${data[i].noteContent}</p>
+                        <button id="deleteButton" class="buttonBasic" onclick="deleteNote()">Delete note</button>
                         <h4>${data[i].noteName}</h4>
+                        <p>${data[i].noteContent}</p>
                     </article>
                     `;
 
@@ -222,6 +224,10 @@ window.addEventListener('load', (e) => {
             });
     }
 });
+
+deleteNoteBtn(){
+    
+}
 
 
 // add note to database
@@ -306,10 +312,6 @@ if (addNote) {
                         return false;
                     }
                 };
-
-                // closeModal.onclick = function() {
-                //     newNoteOutput.style.display = "none";
-                // };
 
                 console.log(data);
             })
