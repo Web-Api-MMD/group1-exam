@@ -100,10 +100,11 @@ if (loginBtn) {
                 })
                 .then(data => {
                     // localStorage.setItem('accountInfo', JSON.stringify(data));
-                    localStorage.setItem('accountInfo', data);
+                    localStorage.setItem('accountInfo', JSON.stringify(data)); // stringify else it only output [object] Object
                     const accountInfo = localStorage.getItem('accountInfo');
+                    console.log(accountInfo);
 
-                    // console.log(JSON.stringify(accountInfo));
+                    // console.log(accountInfo);
 
                     console.log(accountInfo);
                     //  --- sendes til anden side når logget ind 
@@ -191,6 +192,8 @@ window.addEventListener('load', (e) => {
 window.addEventListener('load', (e) => {
     const token = localStorage.getItem('cn-authenticate-token');
     const accountInfo = localStorage.getItem('accountInfo');
+    console.log(JSON.stringify(accountInfo));
+
     accountInfoObj = JSON.parse(accountInfo); // convert accountInfo from string to object
     const fetchOptions = {
         headers: {
@@ -203,6 +206,7 @@ window.addEventListener('load', (e) => {
     // part to render notes
 
     if (ownNotes && token) {
+        console.log(JSON.stringify(accountInfo));
         const loggedInID = accountInfoObj.userID;
 
         fetchOptions.method = 'GET';
@@ -211,6 +215,7 @@ window.addEventListener('load', (e) => {
                 return response.json()
             })
             .then(data => {
+                console.log(data.length);
                 for (let i = 0; i < data.length; i++) {
                     let htmlOutput = `
                     <article class="noteContent">
@@ -220,7 +225,7 @@ window.addEventListener('load', (e) => {
                     </article>
                     `;
 
-                    ownNotes.innerHTML += htmlOutput;
+                    hasNotes.innerHTML += htmlOutput;
                     noAccess.classList.add("hidden");
                 }
 
@@ -232,9 +237,9 @@ window.addEventListener('load', (e) => {
     }
 });
 
-deleteNoteBtn(){
+// deleteNoteBtn(){
     
-};
+// };
 
 
 // add note to database
