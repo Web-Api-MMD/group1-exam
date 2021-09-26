@@ -151,13 +151,13 @@ window.addEventListener('load', (e) => {
         fetchOptions.method = 'GET';
         fetch(APIaddress + '/api/notes/', fetchOptions)
             .then(response => {
-                // console.log(response);
+                //console.log(response);
                 return response.json()
             })
             .then(data => {
                 // console.log(data);
                 console.log(accountInfo);
-                for (let i = 0; i < 11; i++) { // i < data.length
+                for (let i = 0; i < 8; i++) { // i < data.length
                     let htmlOutput = `
                     <section class="category">
                         <h3>Notes on ${data[i].noteCategory.categoryName}</h3>
@@ -177,7 +177,6 @@ window.addEventListener('load', (e) => {
                     outputDiv.innerHTML += htmlOutput;
                     noAccess.classList.add("hidden");
                 }
-
             })
             .catch(error => {
                 console.log(error);
