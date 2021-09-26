@@ -23,7 +23,7 @@
             <h1>CrossNotes</h1>
         </a>
         <ul>
-            <li> <a href="./discoverCategory.html">Notes</a> </li>
+            <li> <a href="./discoverNotes.html">Notes</a> </li>
             <li> <a href="./addNote.html"> Add note </a> </li>
             <li> <a href="./ownNotes.html"> My notes </a> </li>
 
@@ -34,14 +34,13 @@
     <main class="discoverNotes white">
         <h2>Discover notes</h2>
         <div>
-            <section class="category">
-                <h3>Notes on UX/UI</h3>
-                <a href="./discoverNotes.html">Return</a>
-            </section>
-            <article class="description">
-                <p>Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore </p>
-            </article>
-            <div class="notes">
+            <div id="noAccess">
+                <p>Sorry! Access denied</p>
+                <p>You are not logged in. Please log in or sign up to read notes</p>
+                <button class="buttonBasic"> <a href="../frontend/logIn.html">Log in</a> </button>
+                <button class="buttonBasic"> <a href="../frontend/signup.html">Sign up</a> </button>
+            </div>
+            <div class="notes" id="NoteCategory">
                 <article id="noteContent">
                     <p></p>
                     <h4></h4>
@@ -55,7 +54,7 @@
         <p> &copy; @2021 Anna, Frederikke & Scott</p>
     </footer>
 
-    <script src="/frontend/script.js"></script>
+    <script src="../frontend/assets/script/script.js"></script>
 </body>
 
 </html>
