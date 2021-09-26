@@ -446,7 +446,7 @@ class Note {
         });
     }  
 
-    static delete(noteid) {
+    static delete(noteID) {
         return new Promise((resolve, reject) => {
             (async () => {
                 // › › connect to DB
@@ -457,23 +457,17 @@ class Note {
                 // › › close DB connection
 
                 try {
-                    const note = await Note.readById(noteid);
+                    // const note = await Note.readById(noteID);
 
                     const pool = await sql.connect(con);
                     const result = await pool.request()
-                        .input('noteid', sql.Int(), noteid)
+                        .input('noteID', sql.Int(), noteID)
                         .query(`
-                        DELETE liloBookAuthor
-                        WHERE FK_bookid = @bookid;
-
-                        DELETE liloLoan
-                        WHERE FK_bookid = @bookid;
-
-                        DELETE liloBook
-                        WHERE bookid = @bookid
+                        DELETE cnNote
+                        WHERE noteID = @noteID
                     `);
-
-                    resolve(note);
+                    console.log(result);
+                    resolve(result);
 
                 } catch (error) {
                     reject(error);
