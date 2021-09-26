@@ -112,26 +112,27 @@ router.delete('/:noteID', async (req, res) => {
     }
 });
 
-// router.put('/:noteid', async (req, res) => {
-//     // › › validate req.params.noteid as noteid
-//     // › › validate req.body (payload) as note --> authors must have authorid!
-//     // › › call note = await note.readById(req.params.noteid)
-//     // › › merge / overwrite note object with req.body
-//     // › › call await note.update() --> note holds the updated information
-//     const noteidValidate = Note.validate(req.params);
-//     if (noteidValidate.error) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: noteid has to be an integer', errorDetail: error.details[0].message }));
+router.put('/:noteID', async (req, res) => {
+    // › › validate req.params.noteid as noteid
+    // › › validate req.body (payload) as note --> authors must have authorid!
+    // › › call note = await note.readById(req.params.noteid)
+    // › › merge / overwrite note object with req.body
+    // › › call await note.update() --> note holds the updated information
+    console.log(req.params);
+    const noteIDValidate = Note.validate(req.params);
+    if (noteIDValidate.error) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: noteID has to be an integer', errorDetail: error.details[0].message }));
 
-//     const payloadValidate = Note.validate(req.body);
-//     if (payloadValidate.error) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: note payload formatted incorrectly', errorDetail: error.details[0].message }));
+    const payloadValidate = Note.validate(req.body);
+    if (payloadValidate.error) return res.status(400).send(JSON.stringify({ errorMessage: 'Bad request: note payload formatted incorrectly', errorDetail: error.details[0].message }));
 
-//     try {
-//         const oldNote = await Note.readById(req.params.noteid);
-//         oldNote.copy(req.body);
-//         const note = await oldNote.update();
-//         return res.send(JSON.stringify(note));
-//     } catch (err) {
-//         return res.status(500).send(JSON.stringify({ errorMessage: err }));
-//     }
-// });
+    try {
+        const oldNote = await Note.readById(req.params.noteID);
+        oldNote.copy(req.body);
+        const note = await oldNote.update();
+        return res.send(JSON.stringify(note));
+    } catch (err) {
+        return res.status(500).send(JSON.stringify({ errorMessage: err }));
+    }
+});
 
 module.exports = router;

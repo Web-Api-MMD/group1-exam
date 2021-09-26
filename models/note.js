@@ -494,52 +494,53 @@ class Note {
                 // › › close DB connection
 
                 try {
-                    const oldNote = await Note.readById(this.noteid);   // <-- this was (should have been) checked already in the route handler
+                    // const oldNote = await Note.readById(this.noteid);   // <-- this was (should have been) checked already in the route handler
 
-                    this.authors.forEach(async (author) => {
-                        const authorCheck = await Author.readById(author.authorid);
-                    });
-
+                    // this.authors.forEach(async (author) => {
+                    //     const authorCheck = await Author.readById(author.authorid);
+                    // });
+                    console.log(this.noteID);
+                    console.log(this.noteName);
+                    console.log(this.noteContent);
                     const pool = await sql.connect(con);
-                    const result = await pool.request()
-                        .input('title', sql.NVarChar(50), this.title)
-                        .input('year', sql.Int(), this.year)
-                        .input('link', sql.NVarChar(255), this.link)
-                        .input('bookid', sql.Int(), this.bookid)
-                        .input('authorid', sql.Int(), this.authors[0].authorid)
+                    const updateNote = await pool.request()
+                        .input('noteName', sql.NVarChar(50), this.noteName)
+                        .input('noteContent', sql.NVarChar(), this.noteContent)
+                        .input('noteID', sql.Int(), this.noteID)
                         .query(`
-                            UPDATE liloBook
+                            UPDATE cnNote
                             SET
-                                title = @title,
-                                year = @year,
-                                link = @link
-                            WHERE bookid = @bookid;
+                                noteName = @noteName,
+                                noteContent = @noteContent
 
-                            DELETE liloBookAuthor
-                            WHERE FK_bookid = @bookid;
-
-                            INSERT INTO liloBookAuthor (FK_bookid, FK_authorid)
-                            VALUES (@bookid, @authorid)
+                            WHERE noteID = @noteID;
                         `);
+                        // SOME OF THE QUERY
+                        
+                        // DELETE liloBookAuthor
+                        // WHERE FK_bookid = @bookid;
 
-                    this.authors.forEach(async (author, index) => {
-                        if (index > 0) {
-                            await pool.connect();
-                            const resultAuthors = await pool.request()
-                                .input('bookid', sql.Int(), this.bookid)
-                                .input('authorid', sql.Int(), author.authorid)
-                                .query(`
-                                        INSERT INTO liloBookAuthor (FK_bookid, FK_authorid)
-                                        VALUES (@bookid, @authorid)
-                                    `);
-                        }
-                    });
+                        // INSERT INTO liloBookAuthor (FK_bookid, FK_authorid)
+                        // VALUES (@bookid, @authorid)
+
+                    // this.authors.forEach(async (author, index) => {
+                    //     if (index > 0) {
+                    //         await pool.connect();
+                    //         const resultAuthors = await pool.request()
+                    //             .input('bookid', sql.Int(), this.bookid)
+                    //             .input('authorid', sql.Int(), author.authorid)
+                    //             .query(`
+                    //                     INSERT INTO liloBookAuthor (FK_bookid, FK_authorid)
+                    //                     VALUES (@bookid, @authorid)
+                    //                 `);
+                    //     }
+                    // });
 
                     sql.close();
 
-                    const note = await Note.readById(this.noteid);
+                    // const note = await Note.readById(this.noteID);
 
-                    resolve(note);
+                    resolve(updateNote);
 
                 } catch (error) {
                     reject(error);
